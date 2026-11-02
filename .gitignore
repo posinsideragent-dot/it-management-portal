@@ -1,0 +1,23 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+
+# Secrets and local config. Never commit these.
+.env
+.env.*
+*.pfx
+*.p12
+*.key
+*.pem
+secrets/
+**/local_config.*
+
+# OS
+Thumbs.db
+.DS_Store
