@@ -29,6 +29,8 @@ With `Sites.Selected` in the delegated case, access needs two things: the site g
 | Client ID (DEV) | ed45bfb6-e005-40ba-8522-a53359e2a8dc |
 | SharePoint site ID (DEV) | sqlacc.sharepoint.com,626945d6-16e9-4fdd-8ad3-993720800677,f601c7c7-e0ff-4907-b2b3-05941f3acecf |
 | Site grant for ITDMP-DEV app | Done 2026-11-02. Role: write. Site ITDMP-DEV only. |
+| List ID: IT_Employees (DEV) | 1b0bf4f3-5ef8-4907-9b99-66231cd23e4b |
+| List ID: IT_PoC_Test (DEV) | 93137a60-b271-41d6-b84c-8666faae6be4 |
 | Client ID (PROD) | _to fill_ |
 | App owner (company admin) | _to fill_ |
 
