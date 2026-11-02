@@ -16,13 +16,15 @@ URL pattern: `https://<tenant>.sharepoint.com/sites/ITDMP-DEV`. The admin suppli
 
 ## Security groups
 
-| Group | Members | Access |
+Three groups only. Roles (Management, TeamLead, Employee, Admin) are stored in `IT_Employees.AppRole`, not as SharePoint groups.
+
+| Group | Permission level | Members |
 |---|---|---|
-| ITDMP Management | Company management | Full operational and KPI access |
-| ITDMP Team Leads | Technical team leads | Manage technical team records |
-| ITDMP Employees | Programmers and IT staff | Team task visibility, own work records |
-| ITDMP Documentation | Authorised technical staff | Documentation access |
-| ITDMP Administrators | At least two company admins | App and site administration |
+| ITDMP-DEV Owners (built-in) | Full Control | Two company admins |
+| ITDMP Management | Edit | Management users. With Owners, the only access to `IT_KPIRecords`. |
+| ITDMP Members | Contribute | Programmers, IT staff, team leads |
+
+The documentation libraries inherit from the site. There is no separate documentation group.
 
 ## Naming and relationships
 

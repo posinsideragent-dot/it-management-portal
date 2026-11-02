@@ -13,21 +13,23 @@ Time needed: about 1 to 2 hours.
 3. Name: `ITDMP-DEV`. URL: `https://sqlacc.sharepoint.com/sites/ITDMP-DEV`. Privacy: Private.
 4. Owners: add both company admins (at least two).
 
-## Part B. Create the 5 security groups (step 2)
+## Part B. Set up 3 groups (step 2)
 
-On the site: Settings (gear), Site permissions, Advanced permissions settings, Create Group.
+Keep it small. Use the site's built-in Owners group and create only 2 new groups.
+Roles such as Team Lead live in `IT_Employees.AppRole`, not in SharePoint groups.
 
-| Group | Permission level (Phase 1) | Members |
+On the site: Settings (gear), Site permissions, Advanced permissions settings.
+
+| Group | Permission level | Members |
 |---|---|---|
-| ITDMP Management | Edit | Management users |
-| ITDMP Team Leads | Edit | Team leads |
-| ITDMP Employees | Contribute | The authorised test account (and later the programmers and IT staff) |
-| ITDMP Documentation | Read | Authorised technical staff |
-| ITDMP Administrators | Full Control | At least two company admins |
+| ITDMP-DEV Owners (built-in) | Full Control | The two company admins |
+| ITDMP Management (create) | Edit | Management users |
+| ITDMP Members (create) | Contribute | All programmers, IT staff and team leads. For Phase 1: the authorised test account. |
 
 Notes:
-- Permission levels are a starting point. Fine tuning (for example KPI list for Management only) comes after the Phase 1 gate.
-- The **unauthorised test account must not be a member of any of these groups**, and must not be a member or visitor of the site.
+- After the Phase 1 gate, restrict `IT_KPIRecords` to Owners and Management only (stop inheriting permissions on that list).
+- The **unauthorised test account must not be in any of these groups**, and must not be a member or visitor of the site.
+- Trade-off: with one Members group, SharePoint cannot stop one member editing another member's time log. Step 9 of the plan tests this. If it fails, the fix is a small secured API (spec section 7.2), not more groups.
 
 ## Part C. Create the two lists (step 3)
 
@@ -115,7 +117,7 @@ How access works for a signed-in user (delegated): the user gets only what both 
 
 ## Part F. Test accounts
 
-- **Account 1 (authorised):** member of `ITDMP Employees`, and a row in `IT_Employees`.
+- **Account 1 (authorised):** member of `ITDMP Members`, and a row in `IT_Employees`.
 - **Account 2 (unauthorised):** in none of the ITDMP groups and not on the site.
 
 Use real company accounts made for testing. Do not use the admin accounts for the tests.
@@ -136,7 +138,7 @@ Use real company accounts made for testing. Do not use the admin accounts for th
 ## Done checklist
 
 - [ ] Site `ITDMP-DEV` exists, 2+ owners
-- [ ] 5 groups created
+- [ ] Owners confirmed, 2 groups created (Management, Members)
 - [ ] `IT_Employees` and `IT_PoC_Test` created, unique columns set
 - [ ] Test rows added
 - [ ] Entra app registered, single tenant, no secret, public client flows on
