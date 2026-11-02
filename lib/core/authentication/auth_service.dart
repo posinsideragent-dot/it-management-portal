@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../configuration/app_config.dart';
 import 'pkce.dart';
+import 'sign_in_gateway.dart';
 
 /// Error with a message that is safe to show to the user.
 /// Never put tokens or codes in these messages.
@@ -30,7 +31,7 @@ class AuthException implements Exception {
 ///
 /// This replaces the Windows-native MSAL named in the spec, because no
 /// maintained Flutter MSAL package supports Windows. See docs/Authentication.md.
-class AuthService {
+class AuthService implements SignInGateway {
   AuthService(
     this._config, {
     FlutterSecureStorage? storage,
@@ -75,6 +76,7 @@ class AuthService {
   }
 
   /// True when a saved session exists and could be refreshed.
+  @override
   Future<bool> trySilentSignIn() async {
     try {
       await getAccessToken();
@@ -85,6 +87,7 @@ class AuthService {
   }
 
   /// Interactive sign-in in the system browser.
+  @override
   Future<void> signIn() async {
     final verifier = generateCodeVerifier();
     final challenge = codeChallengeFor(verifier);
@@ -138,6 +141,7 @@ class AuthService {
   }
 
   /// Clears the saved session and the in-memory token.
+  @override
   Future<void> signOut() async {
     _accessToken = null;
     _accessTokenExpiresUtc = null;

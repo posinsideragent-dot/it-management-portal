@@ -108,6 +108,23 @@ The log shows the time each call took in milliseconds. This is the speed test fo
 | `'C:\Users\SQL' is not recognized` and `Building native assets for package:objective_c failed` | The Flutter SDK or pub cache is in a path with a space. Move Flutter to `C:\dev\flutter`, set `PUB_CACHE=C:\dev\pub_cache`, update PATH, then run `flutter clean` and `flutter pub get`. |
 | Build error mentioning ATL | Install the "C++ ATL" component in Visual Studio. |
 
+## 9. Run the app shell (branch feature/app-shell)
+
+```powershell
+git fetch
+git checkout feature/app-shell
+flutter pub add fluent_ui flutter_riverpod go_router
+flutter pub get
+flutter analyze
+flutter test
+flutter run -d windows
+```
+
+- The spike test page is still available: `flutter run -d windows -t lib/spike_main.dart`.
+- Expected: a sign-in card. After Microsoft sign-in the sidebar shell opens with Dashboard, Time Tracker and Settings. The top bar shows your name.
+- A work account that is not in `IT_Employees`, or is inactive, must see an "Access denied" message.
+- After the first successful build, commit `pubspec.yaml`, `pubspec.lock`, `windows/` and `analysis_options.yaml` so the project can be built from the repo.
+
 ## Rules while testing
 
 - Never paste passwords into chat, files or commits.

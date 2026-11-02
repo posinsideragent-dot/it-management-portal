@@ -1,25 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/configuration/app_config.dart';
-import 'spike/spike_page.dart';
+import 'app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ItdmpApp());
-}
-
-/// Phase 1 entry point. Step 6 replaces the home page with the real shell
-/// (Fluent UI, Riverpod, go_router).
-class ItdmpApp extends StatelessWidget {
-  const ItdmpApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ITDMP',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true),
-      home: const SpikePage(config: AppConfig.dev),
-    );
-  }
+  runApp(const ProviderScope(child: ItdmpApp()));
 }

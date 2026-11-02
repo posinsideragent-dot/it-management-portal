@@ -2,8 +2,14 @@ import '../../core/configuration/app_config.dart';
 import '../../models/employee.dart';
 import '../api/graph_client.dart';
 
+/// Looks up an employee by Entra Object ID. Lets services be tested with fakes.
+abstract interface class EmployeeLookup {
+  @override
+  Future<Employee?> findByEntraObjectId(String objectId);
+}
+
 /// Reads the IT_Employees list.
-class EmployeeRepository {
+class EmployeeRepository implements EmployeeLookup {
   EmployeeRepository(this._graph, this._config);
 
   final GraphClient _graph;
