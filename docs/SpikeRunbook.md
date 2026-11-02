@@ -8,6 +8,8 @@ Run this on a **Windows 10/11 PC**. The code was written without being compiled,
 - Visual Studio 2022 with the workload **Desktop development with C++**. In the details panel, also tick **C++ ATL for latest build tools** (needed by flutter_secure_storage).
 - Git.
 
+**Install Flutter and the pub cache in folders without spaces**, for example `C:\dev\flutter` and `C:\dev\pub_cache` (set the user environment variable `PUB_CACHE=C:\dev\pub_cache`). A space in the path, such as a Windows user name like `SQL Mysoftware`, breaks native-asset builds.
+
 Check with `flutter doctor`. The Windows and Visual Studio lines must be green.
 
 ## 2. Get the code
@@ -103,6 +105,7 @@ The log shows the time each call took in milliseconds. This is the speed test fo
 | HTTP 400 on Who am I mentioning the filter or index | `EntraObjectID` is not indexed. Index it in List settings. |
 | HTTP 412 never appears in test 6 | SharePoint ignored If-Match. Report it. This changes the concurrency design. |
 | Browser opens but the app never continues | A firewall or security tool blocked the local address. Report it. |
+| `'C:\Users\SQL' is not recognized` and `Building native assets for package:objective_c failed` | The Flutter SDK or pub cache is in a path with a space. Move Flutter to `C:\dev\flutter`, set `PUB_CACHE=C:\dev\pub_cache`, update PATH, then run `flutter clean` and `flutter pub get`. |
 | Build error mentioning ATL | Install the "C++ ATL" component in Visual Studio. |
 
 ## Rules while testing
