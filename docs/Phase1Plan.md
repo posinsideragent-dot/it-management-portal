@@ -50,11 +50,11 @@ Device code flow is allowed for the proof of concept only, and only if the admin
 
 ## Gate checklist (section 19.1)
 
-- [ ] Windows Microsoft login works
-- [ ] Delegated SharePoint access works
-- [ ] Create and read a list item
-- [ ] Update a list item
-- [ ] Correct user identity retrieved
+- [x] Windows Microsoft login works
+- [x] Delegated SharePoint access works
+- [x] Create and read a list item
+- [x] Update a list item
+- [x] Correct user identity retrieved
 - [ ] Unauthorised user is denied
 
 Do not start full module work until every box is ticked.

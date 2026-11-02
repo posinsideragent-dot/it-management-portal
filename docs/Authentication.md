@@ -1,6 +1,6 @@
 # Authentication
 
-Status: **Option 1 checked on 2026-11-02: failed (no Windows support). Option 2 (Dart PKCE) is next and must be tested on a real Windows PC.**
+Status: **Option 1 checked on 2026-11-02: failed (no Windows support). Option 2 (Dart PKCE) passed on a real Windows PC on 2026-11-03 (5 of 6 gate checks; unauthorised-user check pending).**
 
 ## Decisions
 
@@ -75,7 +75,7 @@ Unknown or inactive users are denied, with a message that names the administrato
 | Option | Tried on | Result | Notes |
 |---|---|---|---|
 | 1. Flutter MSAL package | 2026-11-02 (pub.dev check) | **Fail** | msal_auth 3.5.3: Android, iOS, macOS only. msal_auth_plugin 1.0.2: Android, iOS only. msal_flutter_auth 3.1.0: Android, iOS only. aad_oauth 1.0.1: mobile and web, last update Feb 2024. None lists Windows. desktopoauth2 1.0.4 (PKCE, localhost redirect) has an unverified publisher, 5 likes, about 2 years old: reference only, not a dependency. |
-| 2. Dart PKCE | | _pending Windows test_ | Own code: loopback listener (dart:io), url_launcher, crypto (SHA-256), flutter_secure_storage (Windows: encryption key in Credential Manager, values in encrypted files) |
+| 2. Dart PKCE | 2026-11-03 (Windows PC) | **Pass (5 of 6 gate checks)** | Sign-in, silent restore from saved session, identity match, read, create, update with ETag and 412 on old ETag all passed. Calls took 100-630 ms. Unauthorised-user denial still to test. Flutter SDK and pub cache must be in paths without spaces. | Own code: loopback listener (dart:io), url_launcher, crypto (SHA-256), flutter_secure_storage (Windows: encryption key in Credential Manager, values in encrypted files) |
 | 3. C# helper | | | Only if needed |
 
 **Chosen option:** _to fill_
