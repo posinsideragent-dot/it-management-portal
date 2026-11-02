@@ -1,6 +1,6 @@
 # Authentication
 
-Status: **Spike not done yet.** Fill in the results section after Phase 1 step 5.
+Status: **Option 1 checked on 2026-11-02: failed (no Windows support). Option 2 (Dart PKCE) is next and must be tested on a real Windows PC.**
 
 ## Decisions
 
@@ -74,8 +74,8 @@ Unknown or inactive users are denied, with a message that names the administrato
 
 | Option | Tried on | Result | Notes |
 |---|---|---|---|
-| 1. Flutter MSAL package | | | Package name, version, last update |
-| 2. Dart PKCE | | | |
+| 1. Flutter MSAL package | 2026-11-02 (pub.dev check) | **Fail** | msal_auth 3.5.3: Android, iOS, macOS only. msal_auth_plugin 1.0.2: Android, iOS only. msal_flutter_auth 3.1.0: Android, iOS only. aad_oauth 1.0.1: mobile and web, last update Feb 2024. None lists Windows. desktopoauth2 1.0.4 (PKCE, localhost redirect) has an unverified publisher, 5 likes, about 2 years old: reference only, not a dependency. |
+| 2. Dart PKCE | | _pending Windows test_ | Own code: loopback listener (dart:io), url_launcher, crypto (SHA-256), flutter_secure_storage (Windows: encryption key in Credential Manager, values in encrypted files) |
 | 3. C# helper | | | Only if needed |
 
 **Chosen option:** _to fill_
