@@ -51,13 +51,13 @@ class SessionService {
       final profile = await _profiles.fetchMe();
       final employee = await _employees.findByEntraObjectId(profile.objectId);
       if (employee == null) {
-        return _block(
+        return await _block(
           '${profile.userPrincipalName} is not registered in ITDMP. '
           'Ask IT to add you to the employee list.',
         );
       }
       if (!employee.isActive) {
-        return _block('Your ITDMP account is inactive. Contact IT.');
+        return await _block('Your ITDMP account is inactive. Contact IT.');
       }
       return SessionActive(AppUser(profile: profile, employee: employee));
     } on GraphException catch (e) {

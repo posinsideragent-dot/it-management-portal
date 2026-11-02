@@ -29,21 +29,24 @@ class AppShell extends ConsumerWidget {
         : (footerIndex >= 0 ? _mainPaths.length + footerIndex : 0);
 
     return NavigationView(
-      appBar: NavigationAppBar(
-        automaticallyImplyLeading: false,
-        title: Text('ITDMP  (${config.environment})'),
-        actions: Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Text(userName),
+      // fluent_ui 4.14+ replaced NavigationAppBar with a plain `titleBar` widget.
+      titleBar: SizedBox(
+        height: 48,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Text('ITDMP  (${config.environment})'),
+              const Spacer(),
+              Text(userName),
+            ],
           ),
         ),
       ),
       paneBodyBuilder: (item, body) => child,
       pane: NavigationPane(
         selected: selected,
-        displayMode: PaneDisplayMode.open,
+        displayMode: PaneDisplayMode.expanded,
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.home),

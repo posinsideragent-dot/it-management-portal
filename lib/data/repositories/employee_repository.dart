@@ -4,7 +4,6 @@ import '../api/graph_client.dart';
 
 /// Looks up an employee by Entra Object ID. Lets services be tested with fakes.
 abstract interface class EmployeeLookup {
-  @override
   Future<Employee?> findByEntraObjectId(String objectId);
 }
 
@@ -20,6 +19,7 @@ class EmployeeRepository implements EmployeeLookup {
 
   /// Finds the employee whose EntraObjectID matches. Returns null if none.
   /// EntraObjectID must be an indexed column (see docs/SharePointSchema.md).
+  @override
   Future<Employee?> findByEntraObjectId(String objectId) async {
     final safeId = objectId.replaceAll("'", "''");
     final json = await _graph.get(
