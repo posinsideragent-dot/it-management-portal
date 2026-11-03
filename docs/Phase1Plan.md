@@ -23,7 +23,7 @@
 | # | Step | Output |
 |---|---|---|
 | 1 | Create the company GitHub repo `it-management-portal`. Protect `main`. Add `CLAUDE.md` and the docs skeleton. | Company-owned repo |
-| 2 | Create the ITDMP-DEV site and the 5 security groups. | DEV site ready |
+| 2 | Create the ITDMP-DEV site and set up 3 groups (built-in Owners, ITDMP Management, ITDMP Members). | DEV site ready |
 | 3 | Create only `IT_Employees` and a throwaway `IT_PoC_Test` list. The other 7 lists wait until the gate passes. | 2 lists |
 | 4 | Register the Entra app: public client, single tenant, no secret. Request `User.Read` and `Sites.Selected`. The admin grants the app access to ITDMP-DEV only. | Client ID, tenant ID |
 | 5 | **Authentication spike (timebox 2 days).** Try the options in the order below. | Decision in `Authentication.md` |
