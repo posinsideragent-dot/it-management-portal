@@ -11,3 +11,5 @@
 - Phase 1 gate: all six checks passed on 2026-11-03. Unauthorised user gets HTTP 403 from SharePoint.
 - Employees module (branch feature/employees): list with paging, add, edit, deactivate, validation, app-level role checks, tests. Not yet compiled or run.
 - Docs: IT_Employees indexes added to the schema; Part G (admin steps) added to AdminSetup-DEV.md.
+- Tasks module step 1 (branch feature/tasks): task list with paging and filters, create, edit, status workflow with reasons, progress, TaskCode generation, estimate lock, tests. Admin Part H added. IT_Tasks gets 3 audit columns (EstimateRevisionReason, EstimateApprovedBy, EstimateApprovedAtUTC). Not yet compiled or run; needs the IT_Tasks list and its List ID.
+- Shared `GraphException.isDuplicateValue` replaces the private check in the Employees service.

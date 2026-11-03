@@ -19,3 +19,19 @@ Open **Employees** in the sidebar.
 - **Deactivate:** the person can no longer use ITDMP. The row and its history are kept. You cannot deactivate yourself or change your own role.
 - If you see "Someone else changed this employee", reload the list and try again.
 - The history of every change is in SharePoint (list version history).
+
+## Tasks
+
+Open **Tasks** in the sidebar. All times are Malaysia time.
+
+| Role | What you can do |
+|---|---|
+| Team Lead, Management, Admin | Create and edit tasks, cancel, approve or return work that is in review |
+| Employee | Read all tasks. On your own tasks: accept, start, put on hold, resume, update progress, submit for review |
+
+- **Status path:** New, Accepted, In Progress, Pending Review, Completed. A task can also be On Hold or Cancelled. Completed and Cancelled tasks are final.
+- Putting a task on hold, cancelling it, returning it, or submitting it for review asks for a reason or remarks.
+- The **estimated hours** are the original estimate. They can change only while the task is New.
+- **Approving** needs completion remarks. If documentation is required, it must be submitted or waived first (the documentation step comes in the next release, so tasks that need documentation cannot be approved yet).
+- **My tasks** shows only tasks assigned to you. The status filter and My tasks run in SharePoint. Search looks at the loaded rows only.
+- A red due date means the task is overdue.

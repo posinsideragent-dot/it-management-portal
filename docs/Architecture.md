@@ -103,6 +103,24 @@ Decisions:
 - **Paging:** Graph `@odata.nextLink`. The link is followed only if it points to `graph.microsoft.com`.
 - **Search and role filter** work on loaded rows. Only the Active/Inactive filter runs in SharePoint.
 
+## Tasks module (step 1)
+
+| Layer | Files |
+|---|---|
+| Presentation | `lib/features/task_management/` (list page, form, status and progress dialogs) |
+| State | `task_list_controller.dart`, `task_list_state.dart` |
+| Service | `lib/services/task_service.dart`, `task_workflow.dart` (the only status table), `task_validator.dart`, `task_codes.dart`, `task_access.dart`, `task_variance.dart` |
+| Repository | `lib/data/repositories/task_repository.dart` (`TaskDirectory` interface) |
+| Models | `task_item.dart`, `task_draft.dart`, `task_enums.dart`, `task_page.dart` |
+
+Decisions:
+- **Status changes** go through `TaskWorkflow`. Assignee: accept, start, hold, resume, submit. Team Lead, Management and Admin: cancel, approve, return.
+- **Reasons** for hold, cancel and return are saved in `BlockerRemarks` with a prefix (`On hold:`, `Cancelled:`, `Returned:`). Version history keeps the earlier text.
+- **TaskCode** is the highest code plus one, restarting each Malaysia year. SharePoint rejects duplicates, and the service retries up to 3 times.
+- **Original estimate** is editable only while the task is New. Revised estimates arrive in step 2.
+- **Actual hours** are not shown yet. They must come from time logs (Time Tracker module).
+- Server-side filters: Status and AssignedEmployeeID (indexed). Search runs on loaded rows.
+
 ## Workspaces
 
 One codebase, three role-based workspaces: Management, Team Lead, Employee.
