@@ -28,3 +28,6 @@ Status: in progress. See also the table at the end of `SpikeRunbook.md`.
 | Time Tracker fails with HTTP 400 mentioning an index | `EmployeeID`, `TaskCode`, `StartTimeUTC`, `TimerStatus` or `ActiveTimerKey` is not indexed in IT_TimeLogs. Re-run the list script. |
 | Timer cannot be ended: "clock is earlier than the start time" | This PC's date or time is wrong. Fix it and try again. |
 | Details shows "Hours used: Not available" | The task has no start or submit date saved. Tasks made before these dates were added show this. New tasks save them when accepted, started and submitted. Also check the 4 new IT_Tasks columns exist (AdminSetup-DEV.md Part J). |
+| New report fails with "You already have a report" | A report for that day exists (maybe a Draft). Find it in the list and choose Edit. |
+| Daily Reports fails to load with HTTP 400 | `EmployeeID`, `ReportDate`, `SubmissionStatus` or `ReportCode` is not indexed in IT_DailyReports. Re-run the list script. If only the sort fails, tell IT: the list is sorted by ReportDate in SharePoint. |
+| Daily Reports: "field name is not recognized" | A column in IT_DailyReports has a wrong internal name (made from Excel). Delete and recreate the list with the script. |

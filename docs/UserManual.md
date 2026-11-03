@@ -68,3 +68,11 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - **Variance** is hours used minus the original estimate. Red means over. Green means under or on.
 - While the task is In Progress the hours are "so far". After submit for review they stop.
 - Tasks made before 3 Nov 2026 may show "Not available" because the dates were not saved.
+
+## Daily Reports
+
+- Open **Daily Reports** in the sidebar and choose **New report**. Pick the date, type the total hours worked (0 to 24) and what you completed. The other boxes are optional.
+- **Save draft** keeps it private to you. **Save and submit** sends it for review. You can have only one report per day.
+- A Draft or Returned report can be edited. A Submitted or Reviewed report is read-only. The report date cannot be changed. Create the report for the right day.
+- A Team Lead, Management or Admin opens **Review**, then chooses **Accept report** or **Send back** (a reason is needed). If it is sent back, the reason shows when you edit it. Fix it and submit again.
+- Team Leads can turn off "My reports only" to see everyone's reports. Use the status filter to find Submitted reports.

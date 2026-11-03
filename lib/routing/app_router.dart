@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/sign_in_page.dart';
+import '../features/daily_reports/daily_report_list_page.dart';
 import '../features/dashboard/dashboard_page.dart';
 import '../features/employee_management/employee_list_page.dart';
 import '../features/settings/settings_page.dart';
@@ -20,6 +21,7 @@ class AppRoutes {
   static const dashboard = '/dashboard';
   static const employees = '/employees';
   static const tasks = '/tasks';
+  static const dailyReports = '/daily-reports';
   static const timeTracker = '/time-tracker';
   static const settings = '/settings';
 }
@@ -68,6 +70,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.tasks,
             builder: (context, state) => const TaskListPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.dailyReports,
+            builder: (context, state) => const DailyReportListPage(),
           ),
           GoRoute(
             path: AppRoutes.timeTracker,

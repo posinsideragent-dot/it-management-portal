@@ -161,6 +161,8 @@ Rules:
 | SubmittedAtUTC | Date and time | No | |
 | ReviewedAtUTC | Date and time | No | |
 
+How the app uses this list: `ReportCode` is `DR-<EmployeeID>-<yyyyMMdd>` (for example `DR-EMP-0002-20261103`). Because it is unique, SharePoint itself refuses a second report for the same person and day. `ReportDate` is written as `YYYY-MM-DDT00:00:00Z`. `CompletedActivities` and `TotalHours` are required even for a draft, because the columns are required. `TotalHours` is typed by the person while the Time Tracker is hidden. Editing a report keeps its date. `ReviewRemarks` keeps the last review reason until the next review; earlier values are in version history. Status flow: Draft, Submitted, then Reviewed or Returned. Returned goes back to Submitted after the owner edits it.
+
 Rules: one report per employee per date. ReportCode is unique. Employees edit only their own drafts. Submitted reports are read-only unless returned.
 
 ## List 5: IT_Issues

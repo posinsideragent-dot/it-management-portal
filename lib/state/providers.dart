@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/authentication/auth_service.dart';
 import '../core/configuration/app_config.dart';
 import '../data/api/graph_client.dart';
+import '../data/repositories/daily_report_repository.dart';
 import '../data/repositories/employee_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/repositories/task_repository.dart';
 import '../data/repositories/time_log_repository.dart';
 import '../models/app_user.dart';
 import '../models/employee.dart';
+import '../services/daily_report_service.dart';
 import '../services/employee_service.dart';
 import '../services/session_service.dart';
 import '../services/session_state.dart';
@@ -104,6 +106,19 @@ final taskServiceProvider = Provider<TaskService>(
     ref.watch(taskDirectoryProvider),
     ref.watch(employeeDirectoryProvider),
   ),
+);
+
+// --- Daily Reports ---
+
+final dailyReportDirectoryProvider = Provider<DailyReportDirectory>(
+  (ref) => DailyReportRepository(
+    ref.watch(graphClientProvider),
+    ref.watch(appConfigProvider),
+  ),
+);
+
+final dailyReportServiceProvider = Provider<DailyReportService>(
+  (ref) => DailyReportService(ref.watch(dailyReportDirectoryProvider)),
 );
 
 // --- Time Tracker ---

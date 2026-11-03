@@ -12,6 +12,7 @@ class AppConfig {
     required this.pocTestListId,
     required this.tasksListId,
     required this.timeLogsListId,
+    required this.dailyReportsListId,
     this.showTimeTracker = true,
   });
 
@@ -28,6 +29,9 @@ class AppConfig {
   /// IT_TimeLogs list id.
   final String timeLogsListId;
 
+  /// IT_DailyReports list id.
+  final String dailyReportsListId;
+
   /// Shows the Time Tracker in the sidebar and top bar. When false the page
   /// is hidden and no timer is read. The code stays in place.
   final bool showTimeTracker;
@@ -43,6 +47,7 @@ class AppConfig {
     pocTestListId: '93137a60-b271-41d6-b84c-8666faae6be4',
     tasksListId: '7d068025-e4b7-4641-a171-537ff03a440f',
     timeLogsListId: '88173a38-5dfe-4e22-be71-1cc97234f4c0',
+    dailyReportsListId: 'ab3c6386-b43f-47d8-8c74-561e7025006e',
   );
 
   /// Delegated scopes requested at sign-in. Keep this list minimal.
@@ -120,6 +125,19 @@ class SpFields {
   static const activityDescription = 'ActivityDescription';
   static const workResult = 'WorkResult';
   static const isDeleted = 'IsDeleted';
+
+  // IT_DailyReports
+  static const reportCode = 'ReportCode';
+  static const reportDate = 'ReportDate';
+  static const plannedActivities = 'PlannedActivities';
+  static const completedActivities = 'CompletedActivities';
+  static const pendingActivities = 'PendingActivities';
+  static const problemsEncountered = 'ProblemsEncountered';
+  static const tomorrowPlan = 'TomorrowPlan';
+  static const totalHours = 'TotalHours';
+  static const submissionStatus = 'SubmissionStatus';
+  static const reviewRemarks = 'ReviewRemarks';
+  static const reviewedAtUtc = 'ReviewedAtUTC';
 
   // Shared
   static const title = 'Title';
