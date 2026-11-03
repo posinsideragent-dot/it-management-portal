@@ -76,3 +76,13 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - A Draft or Returned report can be edited. A Submitted or Reviewed report is read-only. The report date cannot be changed. Create the report for the right day.
 - A Team Lead, Management or Admin opens **Review**, then chooses **Accept report** or **Send back** (a reason is needed). If it is sent back, the reason shows when you edit it. Fix it and submit again.
 - Team Leads can turn off "My reports only" to see everyone's reports. Use the status filter to find Submitted reports.
+
+## Issues
+
+- Open **Issues** and choose **Report issue**. Anyone can report. Give a title, description, type and priority. A related task code and a project code are optional.
+- A Team Lead, Management or Admin opens the issue (**Open** button) and chooses **Assign**. The issue becomes Assigned.
+- The assigned person chooses **Start investigating**, then **Set to waiting** (say what you wait for) or **Mark resolved** (say what fixed it).
+- The reporter or a Team Lead then chooses **Confirm and close**, or **Reopen** with a reason if it is not fixed.
+- A Team Lead can **Close without fixing** with a reason (for example, a duplicate). Closed issues cannot change.
+- The reporter can edit an Open issue. A Team Lead can edit any issue that is not Closed.
+- Use "Assigned to me" to see your issues. The latest note shows in the issue's details.

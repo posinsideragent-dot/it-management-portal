@@ -31,6 +31,7 @@ class AppShell extends ConsumerWidget {
       AppRoutes.employees,
       AppRoutes.tasks,
       AppRoutes.dailyReports,
+      AppRoutes.issues,
       if (config.showTimeTracker) AppRoutes.timeTracker,
     ];
     final mainIndex = mainPaths.indexOf(location);
@@ -143,6 +144,12 @@ class AppShell extends ConsumerWidget {
             title: const Text('Daily Reports'),
             body: const SizedBox.shrink(),
             onTap: () => context.go(AppRoutes.dailyReports),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.bug),
+            title: const Text('Issues'),
+            body: const SizedBox.shrink(),
+            onTap: () => context.go(AppRoutes.issues),
           ),
           if (showTimeTracker)
             PaneItem(

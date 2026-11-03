@@ -13,6 +13,7 @@ class AppConfig {
     required this.tasksListId,
     required this.timeLogsListId,
     required this.dailyReportsListId,
+    required this.issuesListId,
     this.showTimeTracker = true,
   });
 
@@ -32,6 +33,9 @@ class AppConfig {
   /// IT_DailyReports list id.
   final String dailyReportsListId;
 
+  /// IT_Issues list id.
+  final String issuesListId;
+
   /// Shows the Time Tracker in the sidebar and top bar. When false the page
   /// is hidden and no timer is read. The code stays in place.
   final bool showTimeTracker;
@@ -48,6 +52,9 @@ class AppConfig {
     tasksListId: '7d068025-e4b7-4641-a171-537ff03a440f',
     timeLogsListId: '88173a38-5dfe-4e22-be71-1cc97234f4c0',
     dailyReportsListId: 'ab3c6386-b43f-47d8-8c74-561e7025006e',
+    issuesListId: 'a36dc426-9285-4fed-9cdf-14323917da19',
+    // Hidden: hours come from task dates (see TaskHours). Set true to show it.
+    showTimeTracker: false,
   );
 
   /// Delegated scopes requested at sign-in. Keep this list minimal.
@@ -138,6 +145,15 @@ class SpFields {
   static const submissionStatus = 'SubmissionStatus';
   static const reviewRemarks = 'ReviewRemarks';
   static const reviewedAtUtc = 'ReviewedAtUTC';
+
+  // IT_Issues
+  static const issueCode = 'IssueCode';
+  static const issueType = 'IssueType';
+  static const reportedByEmployeeId = 'ReportedByEmployeeID';
+  static const relatedTaskCode = 'RelatedTaskCode';
+  static const resolutionRemarks = 'ResolutionRemarks';
+  static const reportedAtUtc = 'ReportedAtUTC';
+  static const resolvedAtUtc = 'ResolvedAtUTC';
 
   // Shared
   static const title = 'Title';

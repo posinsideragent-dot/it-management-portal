@@ -183,6 +183,8 @@ Rules: one report per employee per date. ReportCode is unique. Employees edit on
 | ReportedAtUTC | Date and time | Yes | |
 | ResolvedAtUTC | Date and time | No | |
 
+How the app uses this list: `IssueCode` is `ISS-<year>-<5 digits>`, restarting each year. Status flow: Open, Assigned (a lead assigns), Investigating, Waiting or Resolved, then Closed. A Resolved issue can be reopened to Investigating. Closed is final. A lead can close any issue that is not Resolved without fixing it, with a reason. `ResolutionRemarks` holds the latest note: `Waiting: ...`, `Reopened: ...`, `Closed: ...`, or the resolution text itself once Resolved (confirming and closing a Resolved issue keeps the resolution text). Earlier notes are in version history. `RelatedTaskCode` must look like `TASK-2026-00001`; the app does not check that the task exists. `ResolvedAtUTC` is cleared on reopen. Everyone can read all issues in the app.
+
 ## List 6: IT_Projects
 
 | Column | Type | Req | Notes |

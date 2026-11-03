@@ -31,3 +31,6 @@ Status: in progress. See also the table at the end of `SpikeRunbook.md`.
 | New report fails with "You already have a report" | A report for that day exists (maybe a Draft). Find it in the list and choose Edit. |
 | Daily Reports fails to load with HTTP 400 | `EmployeeID`, `ReportDate`, `SubmissionStatus` or `ReportCode` is not indexed in IT_DailyReports. Re-run the list script. If only the sort fails, tell IT: the list is sorted by ReportDate in SharePoint. |
 | Daily Reports: "field name is not recognized" | A column in IT_DailyReports has a wrong internal name (made from Excel). Delete and recreate the list with the script. |
+| Issues fail to load with HTTP 400 mentioning an index | `Status`, `AssignedEmployeeID` or `IssueCode` is not indexed in IT_Issues. Re-run the list script. |
+| Issues: "field name is not recognized" | A column in IT_Issues has a wrong internal name (made from Excel). Delete and recreate the list with the script. |
+| Report issue says "unexpected format or year" | An IssueCode in the list is not `ISS-YYYY-NNNNN`, or this PC's clock is behind the newest code. |

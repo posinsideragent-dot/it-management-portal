@@ -5,6 +5,7 @@ import '../core/configuration/app_config.dart';
 import '../data/api/graph_client.dart';
 import '../data/repositories/daily_report_repository.dart';
 import '../data/repositories/employee_repository.dart';
+import '../data/repositories/issue_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/repositories/task_repository.dart';
 import '../data/repositories/time_log_repository.dart';
@@ -12,6 +13,7 @@ import '../models/app_user.dart';
 import '../models/employee.dart';
 import '../services/daily_report_service.dart';
 import '../services/employee_service.dart';
+import '../services/issue_service.dart';
 import '../services/session_service.dart';
 import '../services/session_state.dart';
 import '../services/task_service.dart';
@@ -104,6 +106,22 @@ final taskDirectoryProvider = Provider<TaskDirectory>(
 final taskServiceProvider = Provider<TaskService>(
   (ref) => TaskService(
     ref.watch(taskDirectoryProvider),
+    ref.watch(employeeDirectoryProvider),
+  ),
+);
+
+// --- Issues ---
+
+final issueDirectoryProvider = Provider<IssueDirectory>(
+  (ref) => IssueRepository(
+    ref.watch(graphClientProvider),
+    ref.watch(appConfigProvider),
+  ),
+);
+
+final issueServiceProvider = Provider<IssueService>(
+  (ref) => IssueService(
+    ref.watch(issueDirectoryProvider),
     ref.watch(employeeDirectoryProvider),
   ),
 );
