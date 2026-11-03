@@ -9,6 +9,7 @@ import '../models/task_enums.dart';
 import '../models/task_item.dart';
 import '../models/task_page.dart';
 import 'task_access.dart';
+import 'task_capabilities.dart';
 import 'task_codes.dart';
 import 'task_validator.dart';
 import 'task_workflow.dart';
@@ -27,8 +28,8 @@ class TaskRuleException implements Exception {
   String toString() => message;
 }
 
-/// Business rules for the Tasks module (step 1: create, edit, status flow,
-/// progress). Estimate revisions and documentation review come in step 2.
+/// Business rules for the Tasks module: create, edit, status flow, progress,
+/// estimate revisions and documentation.
 ///
 /// Role checks are app-level (usability). SharePoint permissions are the real
 /// boundary. SharePoint version history is the audit trail.
@@ -116,10 +117,15 @@ class TaskService {
     if (draft.assignedEmployeeId != current.assignedEmployeeId) {
       await _requireActiveAssignee(draft.assignedEmployeeId);
     }
-    return _save(
-      current,
-      draft.toUpdateFields(includeEstimate: estimateOpen),
-    );
+    final fields = draft.toUpdateFields(includeEstimate: estimateOpen);
+    // Turning documentation on or off resets its status. Otherwise a task
+    // could skip the documentation check on final approval.
+    if (draft.documentationRequired != current.documentationRequired) {
+      fields[SpFields.documentationStatus] = draft.documentationRequired
+          ? DocumentationStatus.pending.label
+          : DocumentationStatus.notRequired.label;
+    }
+    return _save(current, fields);
   }
 
   /// Moves the task to [to]. [remarks] is required for some moves
@@ -203,6 +209,162 @@ class TaskService {
     return _save(current, {
       SpFields.progress: progress,
       SpFields.lastProgressUpdateUtc: _now().toUtc().toIso8601String(),
+    });
+  }
+
+  // --- estimate revisions ---
+
+  /// Asks for a new estimate. The original estimate is never changed.
+  /// A Team Lead must approve it before it counts.
+  Future<TaskItem> requestEstimateRevision(
+    AppUser actor,
+    TaskItem current, {
+    required double? hours,
+    required String reason,
+  }) async {
+    final caps = TaskCapabilities.of(actor, current);
+    if (!caps.canRequestRevision) {
+      throw TaskRuleException(
+        current.hasPendingRevision
+            ? 'A revision is already waiting for approval.'
+            : 'An estimate revision can be requested by the assigned person '
+                'or a Team Lead, after the task is accepted and before it '
+                'is sent for review.',
+      );
+    }
+    if (hours == null || hours <= 0) {
+      throw TaskRuleException('Enter the new estimate in hours.');
+    }
+    if (hours > TaskValidator.maxEstimateHours) {
+      throw TaskRuleException(
+        'The estimate cannot be more than '
+        '${TaskValidator.maxEstimateHours.toInt()} hours.',
+      );
+    }
+    if (hours == current.effectiveEstimateHours) {
+      throw TaskRuleException('The new estimate is the same as the current one.');
+    }
+    final text = reason.trim();
+    if (text.isEmpty) throw TaskRuleException('Enter the reason for the revision.');
+
+    return _save(current, {
+      SpFields.proposedEstimatedHours: hours,
+      SpFields.estimateRevisionReason: text,
+    });
+  }
+
+  /// A Team Lead approves the waiting revision. It becomes the revised
+  /// estimate. The original estimate stays as it was.
+  Future<TaskItem> approveEstimateRevision(
+    AppUser actor,
+    TaskItem current,
+  ) async {
+    _requireDecider(actor, current);
+    return _save(current, {
+      SpFields.revisedEstimatedHours: current.proposedEstimatedHours,
+      SpFields.proposedEstimatedHours: null,
+      SpFields.estimateApprovedBy: actor.employee.employeeId,
+      SpFields.estimateApprovedAtUtc: _now().toUtc().toIso8601String(),
+    });
+  }
+
+  /// A Team Lead refuses the waiting revision. The estimate in force stays.
+  Future<TaskItem> rejectEstimateRevision(
+    AppUser actor,
+    TaskItem current, {
+    required String reason,
+  }) async {
+    _requireDecider(actor, current);
+    final text = reason.trim();
+    if (text.isEmpty) throw TaskRuleException('Enter the reason for refusing.');
+    return _save(current, {
+      SpFields.proposedEstimatedHours: null,
+      SpFields.estimateRevisionReason: 'Rejected: $text',
+    });
+  }
+
+  void _requireDecider(AppUser actor, TaskItem current) {
+    if (!TaskCapabilities.of(actor, current).canDecideRevision) {
+      throw TaskRuleException(
+        current.hasPendingRevision
+            ? 'Only a Team Lead, Management or Admin can decide on a revision.'
+            : 'There is no revision waiting for approval.',
+      );
+    }
+  }
+
+  // --- documentation ---
+
+  /// The assignee says the documentation is ready. [note] says where it is.
+  Future<TaskItem> submitDocumentation(
+    AppUser actor,
+    TaskItem current, {
+    required String note,
+  }) async {
+    if (!TaskCapabilities.of(actor, current).canSubmitDocumentation) {
+      throw TaskRuleException(
+        'Documentation can be submitted by the assigned person while it is '
+        'Pending or Rejected.',
+      );
+    }
+    final text = note.trim();
+    if (text.isEmpty) {
+      throw TaskRuleException('Say where the documentation can be found.');
+    }
+    return _save(current, {
+      SpFields.documentationStatus: DocumentationStatus.submitted.label,
+      SpFields.documentationRemarks:
+          'Submitted by ${actor.employee.employeeId}: $text',
+    });
+  }
+
+  /// A Team Lead accepts (Reviewed) or sends back (Rejected) the submitted
+  /// documentation. Sending back needs a reason.
+  Future<TaskItem> reviewDocumentation(
+    AppUser actor,
+    TaskItem current, {
+    required bool accept,
+    String remarks = '',
+  }) async {
+    if (!TaskCapabilities.of(actor, current).canReviewDocumentation) {
+      throw TaskRuleException(
+        'Only a Team Lead, Management or Admin can review documentation '
+        'that has been submitted.',
+      );
+    }
+    final text = remarks.trim();
+    if (!accept && text.isEmpty) {
+      throw TaskRuleException('Enter the reason for sending it back.');
+    }
+    final by = actor.employee.employeeId;
+    return _save(current, {
+      SpFields.documentationStatus: accept
+          ? DocumentationStatus.reviewed.label
+          : DocumentationStatus.rejected.label,
+      SpFields.documentationRemarks: accept
+          ? 'Reviewed by $by${text.isEmpty ? '' : ': $text'}'
+          : 'Rejected by $by: $text',
+    });
+  }
+
+  /// A Team Lead formally waives the documentation. A reason is required.
+  Future<TaskItem> waiveDocumentation(
+    AppUser actor,
+    TaskItem current, {
+    required String reason,
+  }) async {
+    if (!TaskCapabilities.of(actor, current).canWaiveDocumentation) {
+      throw TaskRuleException(
+        'Only a Team Lead, Management or Admin can waive documentation that '
+        'is Pending or Rejected.',
+      );
+    }
+    final text = reason.trim();
+    if (text.isEmpty) throw TaskRuleException('Enter the reason for waiving.');
+    return _save(current, {
+      SpFields.documentationStatus: DocumentationStatus.notRequired.label,
+      SpFields.documentationRemarks:
+          'Waived by ${actor.employee.employeeId}: $text',
     });
   }
 

@@ -74,7 +74,7 @@ Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values";
 | Priority | Choice | Yes | Low / Normal / High / Critical |
 | Status | Choice | Yes | New / Accepted / In Progress / On Hold / Pending Review / Completed / Cancelled |
 | EstimatedHours | Number | Yes | Initial estimate |
-| RevisedEstimatedHours | Number | No | |
+| RevisedEstimatedHours | Number | No | The approved revised estimate. Empty until a revision is approved. |
 | PlannedStart | Date and time | No | |
 | ExpectedCompletion | Date and time | Yes | |
 | ActualStart | Date and time | No | First actual start |
@@ -89,11 +89,15 @@ Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values";
 | EstimateRevisionReason | Single line text | No | Added 2026-11-03. Why the estimate was revised. |
 | EstimateApprovedBy | Single line text | No | Added 2026-11-03. EmployeeID of the approving Team Lead. |
 | EstimateApprovedAtUTC | Date and time | No | Added 2026-11-03. |
+| ProposedEstimatedHours | Number | No | Added 2026-11-03. A revision waiting for approval. Empty when none waits. Min 0. |
+| DocumentationRemarks | Multiple lines | No | Added 2026-11-03. Last documentation note: submitted, reviewed, rejected or waived, with the EmployeeID. |
 
 Still optional (add only if needed, and document it): `TaskClosedBy`, `TaskClosedAtUTC`.
 
 How the app uses `BlockerRemarks`: it holds the reason when a task is put On Hold, Cancelled, or returned from review. The status and SharePoint version history show which one it was.
-A revised estimate waits for approval while `RevisedEstimatedHours` is set and `EstimateApprovedBy` is empty.
+A revision request sets `ProposedEstimatedHours` and `EstimateRevisionReason`. Approval moves it into `RevisedEstimatedHours` and sets `EstimateApprovedBy` and `EstimateApprovedAtUTC`. Rejection clears `ProposedEstimatedHours` and prefixes the reason with "Rejected:". `EstimatedHours` (the original) never changes. SharePoint version history keeps every earlier value.
+
+The documentation flow is Pending, then Submitted, then Reviewed or Rejected (Rejected goes back to Submitted). A Team Lead can waive documentation (status Not Required) with a reason. `DocumentationRequired` stays Yes.
 
 Rules:
 

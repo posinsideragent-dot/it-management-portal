@@ -23,3 +23,4 @@ Status: in progress. See also the table at the end of `SpikeRunbook.md`.
 | "unexpected format or year" when creating | A TaskCode in the list is not `TASK-YYYY-NNNNN`, or this PC's clock is behind the newest code. |
 | A task shows 1 Jan 1970 as due date | `ExpectedCompletion` is empty on that row. Fill it in SharePoint. |
 | "A provided field name is not recognized" when saving | The list was created with "From Excel", so its columns are named `field_N`. Check with `/_api/web/lists/getbytitle('IT_Tasks')/fields?$select=InternalName,Title&$filter=Hidden eq false`. Delete the list and recreate it with `scripts/Create-ItdmpLists.ps1` (AdminSetup-DEV.md Part I). |
+| Estimate or documentation action fails with "field name is not recognized" | `ProposedEstimatedHours` or `DocumentationRemarks` is missing in IT_Tasks. Run the script for IT_Tasks (AdminSetup-DEV.md Part J). |

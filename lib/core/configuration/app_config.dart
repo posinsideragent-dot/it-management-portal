@@ -93,6 +93,8 @@ class SpFields {
   static const estimateRevisionReason = 'EstimateRevisionReason';
   static const estimateApprovedBy = 'EstimateApprovedBy';
   static const estimateApprovedAtUtc = 'EstimateApprovedAtUTC';
+  static const proposedEstimatedHours = 'ProposedEstimatedHours';
+  static const documentationRemarks = 'DocumentationRemarks';
 
   // Shared
   static const title = 'Title';

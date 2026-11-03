@@ -40,6 +40,9 @@ TaskItem task({
   String completionRemarks = '',
   DateTime? actualStart,
   double estimate = 8,
+  double? proposed,
+  double? revised,
+  bool? docRequired,
 }) =>
     TaskItem(
       itemId: '10',
@@ -55,7 +58,10 @@ TaskItem task({
       estimatedHours: estimate,
       expectedCompletion: DateTime.utc(2026, 12, 1),
       progress: 0,
-      documentationRequired: docs != DocumentationStatus.notRequired,
+      documentationRequired:
+          docRequired ?? docs != DocumentationStatus.notRequired,
+      proposedEstimatedHours: proposed,
+      revisedEstimatedHours: revised,
       documentationStatus: docs,
       completionRemarks: completionRemarks,
       actualStart: actualStart,

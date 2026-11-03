@@ -185,6 +185,10 @@ Then:
 3. **Permissions:** keep inherited permissions. Check with Check Permissions that a non-member still gets 403.
 4. **Send me the List ID.** Use `https://graph.microsoft.com/v1.0/sites/{site-id}/lists?$filter=displayName eq 'IT_Tasks'` in Graph Explorer, or copy it from the list settings address. I record it in `docs/Authentication.md` and the app config.
 
+## Part J: Two more IT_Tasks columns (Tasks step 2)
+
+Run `.\scripts\Create-ItdmpLists.ps1 -Lists IT_Tasks -UseDeviceCode`. It adds only the missing columns: `ProposedEstimatedHours` (Number, min 0) and `DocumentationRemarks` (Multiple lines of text). Do not rename them.
+
 ## Part I: Create the lists with the script (replaces Excel import)
 
 **Do not use "Create list from Excel".** It names the columns `field_1`, `field_2` and so on, and the app cannot find them ("A provided field name is not recognized"). A list made that way must be deleted and recreated.

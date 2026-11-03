@@ -41,3 +41,11 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - The app opens in dark mode. Use the sun or moon button in the top bar, or Settings, to switch.
 - The menu button at the top left collapses the sidebar to icons or expands it. Narrow windows always show icons only.
 - On narrow windows the Tasks table becomes stacked cards. Widen the window to see the full table.
+
+## Estimate revisions and documentation (Tasks, Details button)
+
+- The original estimate is fixed once a task is accepted. To change it, the assigned person or a Team Lead chooses **Request revision** with the new hours and a reason.
+- A Team Lead (or Management, Admin) then chooses **Approve revision** or **Refuse revision** (a reason is needed to refuse). The table shows the hours in force. A star means a revision is waiting.
+- If a task needs documentation, the assigned person chooses **Submit documentation** and says where it is. A Team Lead chooses **Accept documentation** or **Send back** (with a reason). A Team Lead can also **Waive** it with a reason.
+- A task cannot be approved as Completed until documentation is accepted, submitted or waived.
+- A dot on the Details button means you have a step to do on that task.

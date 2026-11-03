@@ -31,6 +31,8 @@ class TaskItem {
     this.estimateRevisionReason = '',
     this.estimateApprovedBy = '',
     this.estimateApprovedAtUtc,
+    this.proposedEstimatedHours,
+    this.documentationRemarks = '',
   });
 
   /// SharePoint list item id.
@@ -52,7 +54,12 @@ class TaskItem {
 
   /// The original estimate. A revision never overwrites it.
   final double estimatedHours;
+
+  /// The approved revised estimate. Null until a revision is approved.
   final double? revisedEstimatedHours;
+
+  /// A revision waiting for approval. Null when none is waiting.
+  final double? proposedEstimatedHours;
 
   /// All dates are UTC. Show them in Malaysia time.
   final DateTime? plannedStart;
@@ -66,6 +73,9 @@ class TaskItem {
   final String completionRemarks;
   final bool documentationRequired;
   final DocumentationStatus documentationStatus;
+
+  /// Last documentation note: submitted, reviewed, rejected or waived.
+  final String documentationRemarks;
   final String reviewedByEmployeeId;
   final DateTime? lastProgressUpdateUtc;
   final String estimateRevisionReason;
@@ -73,8 +83,10 @@ class TaskItem {
   final DateTime? estimateApprovedAtUtc;
 
   /// True when a revised estimate is waiting for Team Lead approval.
-  bool get hasPendingRevision =>
-      revisedEstimatedHours != null && estimateApprovedBy.isEmpty;
+  bool get hasPendingRevision => proposedEstimatedHours != null;
+
+  /// The estimate in force: the approved revision, else the original.
+  double get effectiveEstimateHours => revisedEstimatedHours ?? estimatedHours;
 
   /// [item] is a Graph list item requested with $expand=fields.
   factory TaskItem.fromGraphItem(Map<String, dynamic> item) {
@@ -113,6 +125,8 @@ class TaskItem {
       estimateRevisionReason: text(SpFields.estimateRevisionReason),
       estimateApprovedBy: text(SpFields.estimateApprovedBy),
       estimateApprovedAtUtc: _utc(f[SpFields.estimateApprovedAtUtc]),
+      proposedEstimatedHours: _number(f[SpFields.proposedEstimatedHours]),
+      documentationRemarks: text(SpFields.documentationRemarks),
     );
   }
 }

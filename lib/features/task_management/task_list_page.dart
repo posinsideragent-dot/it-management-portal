@@ -7,11 +7,13 @@ import '../../models/employee.dart';
 import '../../models/task_enums.dart';
 import '../../models/task_item.dart';
 import '../../services/task_access.dart';
+import '../../services/task_capabilities.dart';
 import '../../services/task_workflow.dart';
 import '../../shared/layouts/page_frame.dart';
 import '../../shared/widgets/status_chip.dart';
 import '../../shared/widgets/table_parts.dart';
 import '../../state/providers.dart';
+import 'task_detail_dialog.dart';
 import 'task_form_dialog.dart';
 import 'task_list_controller.dart';
 import 'task_list_state.dart';
@@ -233,7 +235,9 @@ class _TaskRow extends ConsumerWidget {
         task.expectedCompletion.isBefore(DateTime.now().toUtc());
     final due = formatMalaysiaTime(task.expectedCompletion);
     final dueColor = overdue ? StatusColors.danger : null;
-    final actions = _actions(context, actors);
+    final caps = user == null ? null : TaskCapabilities.of(user, task);
+    final actions = _actions(context, actors, caps);
+    final hours = _hoursLabel();
 
     if (!wide) {
       return RowCard(
@@ -262,12 +266,13 @@ class _TaskRow extends ConsumerWidget {
               children: [
                 Text('Due $due', style: TextStyle(color: dueColor)),
                 const SizedBox(width: 16),
-                Text('${_hours(task.estimatedHours)} h'),
+                Text(hours),
                 const SizedBox(width: 16),
                 Expanded(child: _progress()),
               ],
             ),
-            if (actions != null) ...[const SizedBox(height: 10), actions],
+            const SizedBox(height: 10),
+            actions,
           ],
         ),
       );
@@ -295,31 +300,40 @@ class _TaskRow extends ConsumerWidget {
             flex: _columns[4].$2,
             child: Align(alignment: Alignment.centerLeft, child: _statusChip()),
           ),
-          text(5, _hours(task.estimatedHours)),
+          text(5, hours),
           text(6, due, color: dueColor),
           TableCell2(flex: _columns[7].$2, child: _progress()),
           TableCell2(
             flex: _columns[8].$2,
-            child: actions ?? const SizedBox.shrink(),
+            child: actions,
           ),
         ],
       ),
     );
   }
 
-  /// Edit, status moves and progress. Null when the user has none.
-  Widget? _actions(BuildContext context, Set<TaskActor> actors) {
+  /// Details, edit, status moves and progress.
+  Widget _actions(
+    BuildContext context,
+    Set<TaskActor> actors,
+    TaskCapabilities? caps,
+  ) {
     final moves = TaskWorkflow.movesFor(task.status, actors);
     final canEdit = actors.contains(TaskActor.lead) && !task.status.isFinal;
     final canProgress =
         actors.contains(TaskActor.assignee) &&
         task.status == TaskStatus.inProgress;
-    if (!canEdit && moves.isEmpty && !canProgress) return null;
-
     return Wrap(
       spacing: 8,
       runSpacing: 6,
       children: [
+        Button(
+          onPressed: () => showDialog<void>(
+            context: context,
+            builder: (_) => TaskDetailDialog(initial: task),
+          ),
+          child: Text(caps?.hasAny == true ? 'Details \u2022' : 'Details'),
+        ),
         if (canEdit)
           Button(
             onPressed: () => showDialog<bool>(
@@ -347,6 +361,10 @@ class _TaskRow extends ConsumerWidget {
       ],
     );
   }
+
+  /// Hours in force. A star means a revision waits for approval.
+  String _hoursLabel() =>
+      '${_hours(task.effectiveEstimateHours)}${task.hasPendingRevision ? ' *' : ''}';
 
   Widget _progress() => Row(
         children: [

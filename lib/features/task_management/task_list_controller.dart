@@ -116,6 +116,56 @@ class TaskListController extends Notifier<TaskListState> {
     await load();
   }
 
+  Future<void> requestRevision(
+    TaskItem current, {
+    required double? hours,
+    required String reason,
+  }) async {
+    await ref
+        .read(taskServiceProvider)
+        .requestEstimateRevision(_actor(), current, hours: hours, reason: reason);
+    await load();
+  }
+
+  Future<void> approveRevision(TaskItem current) async {
+    await ref
+        .read(taskServiceProvider)
+        .approveEstimateRevision(_actor(), current);
+    await load();
+  }
+
+  Future<void> rejectRevision(TaskItem current, String reason) async {
+    await ref
+        .read(taskServiceProvider)
+        .rejectEstimateRevision(_actor(), current, reason: reason);
+    await load();
+  }
+
+  Future<void> submitDocumentation(TaskItem current, String note) async {
+    await ref
+        .read(taskServiceProvider)
+        .submitDocumentation(_actor(), current, note: note);
+    await load();
+  }
+
+  Future<void> reviewDocumentation(
+    TaskItem current, {
+    required bool accept,
+    String remarks = '',
+  }) async {
+    await ref
+        .read(taskServiceProvider)
+        .reviewDocumentation(_actor(), current, accept: accept, remarks: remarks);
+    await load();
+  }
+
+  Future<void> waiveDocumentation(TaskItem current, String reason) async {
+    await ref
+        .read(taskServiceProvider)
+        .waiveDocumentation(_actor(), current, reason: reason);
+    await load();
+  }
+
   String? _mineFilter() {
     if (!state.mineOnly) return null;
     return ref.read(currentUserProvider)?.employee.employeeId;

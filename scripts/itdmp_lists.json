@@ -251,6 +251,17 @@
           "name": "EstimateApprovedAtUTC",
           "type": "dateTime",
           "required": false
+        },
+        {
+          "name": "ProposedEstimatedHours",
+          "type": "number",
+          "required": false,
+          "min": 0
+        },
+        {
+          "name": "DocumentationRemarks",
+          "type": "multiline",
+          "required": false
         }
       ]
     },
