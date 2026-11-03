@@ -6,6 +6,7 @@ import '../features/auth/sign_in_page.dart';
 import '../features/dashboard/dashboard_page.dart';
 import '../features/employee_management/employee_list_page.dart';
 import '../features/settings/settings_page.dart';
+import '../features/task_management/task_list_page.dart';
 import '../features/time_tracking/time_tracker_page.dart';
 import '../services/session_state.dart';
 import '../shared/layouts/app_shell.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const signIn = '/sign-in';
   static const dashboard = '/dashboard';
   static const employees = '/employees';
+  static const tasks = '/tasks';
   static const timeTracker = '/time-tracker';
   static const settings = '/settings';
 }
@@ -57,6 +59,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.employees,
             builder: (context, state) => const EmployeeListPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.tasks,
+            builder: (context, state) => const TaskListPage(),
           ),
           GoRoute(
             path: AppRoutes.timeTracker,
