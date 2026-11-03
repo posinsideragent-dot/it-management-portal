@@ -19,8 +19,14 @@ import '../services/session_state.dart';
 import '../services/task_service.dart';
 import '../services/time_tracking_service.dart';
 
-/// Which environment the app talks to. Change here to build for PROD later.
-final appConfigProvider = Provider<AppConfig>((ref) => AppConfig.dev);
+/// The environment name from the build: `--dart-define=ITDMP_ENV=PROD`.
+/// Without it the app uses DEV.
+const itdmpEnvironment = String.fromEnvironment('ITDMP_ENV', defaultValue: 'DEV');
+
+/// Which environment the app talks to.
+final appConfigProvider = Provider<AppConfig>(
+  (ref) => AppConfig.forEnvironment(itdmpEnvironment),
+);
 
 final authServiceProvider = Provider<AuthService>(
   (ref) => AuthService(ref.watch(appConfigProvider)),

@@ -57,6 +57,39 @@ class AppConfig {
     showTimeTracker: false,
   );
 
+  /// ITDMP-PROD. The site and list IDs are empty until the admin creates the
+  /// PROD site and lists (docs/AdminSetup-PROD.md). Fill them in, commit, and
+  /// build with `--dart-define=ITDMP_ENV=PROD`. The Entra app is the same as
+  /// DEV (single tenant); it needs a Sites.Selected grant on the PROD site.
+  static const prod = AppConfig(
+    environment: 'PROD',
+    tenantId: 'de1751f9-e541-4dca-9fff-9366ccd7a998',
+    clientId: 'ed45bfb6-e005-40ba-8522-a53359e2a8dc',
+    siteId: '',
+    employeesListId: '',
+    pocTestListId: '',
+    tasksListId: '',
+    timeLogsListId: '',
+    dailyReportsListId: '',
+    issuesListId: '',
+    showTimeTracker: false,
+  );
+
+  /// Picks the settings by name: `PROD` or `DEV` (anything else is DEV).
+  /// The name comes from `--dart-define=ITDMP_ENV=...` at build time.
+  static AppConfig forEnvironment(String name) =>
+      name.toUpperCase() == 'PROD' ? prod : dev;
+
+  /// Names of settings that are still empty. The test list is not needed.
+  List<String> get missingSettings => [
+        if (siteId.isEmpty) 'siteId',
+        if (employeesListId.isEmpty) 'employeesListId',
+        if (tasksListId.isEmpty) 'tasksListId',
+        if (timeLogsListId.isEmpty) 'timeLogsListId',
+        if (dailyReportsListId.isEmpty) 'dailyReportsListId',
+        if (issuesListId.isEmpty) 'issuesListId',
+      ];
+
   /// Delegated scopes requested at sign-in. Keep this list minimal.
   /// Do not add tenant-wide scopes such as Sites.ReadWrite.All.
   static const scopes = <String>[
