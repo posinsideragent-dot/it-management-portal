@@ -23,7 +23,7 @@
 | # | Step | Output |
 |---|---|---|
 | 1 | Create the company GitHub repo `it-management-portal`. Protect `main`. Add `CLAUDE.md` and the docs skeleton. | Company-owned repo |
-| 2 | Create the ITDMP-DEV site and the 5 security groups. | DEV site ready |
+| 2 | Create the ITDMP-DEV site and set up 3 groups (built-in Owners, ITDMP Management, ITDMP Members). | DEV site ready |
 | 3 | Create only `IT_Employees` and a throwaway `IT_PoC_Test` list. The other 7 lists wait until the gate passes. | 2 lists |
 | 4 | Register the Entra app: public client, single tenant, no secret. Request `User.Read` and `Sites.Selected`. The admin grants the app access to ITDMP-DEV only. | Client ID, tenant ID |
 | 5 | **Authentication spike (timebox 2 days).** Try the options in the order below. | Decision in `Authentication.md` |
@@ -50,12 +50,12 @@ Device code flow is allowed for the proof of concept only, and only if the admin
 
 ## Gate checklist (section 19.1)
 
-- [ ] Windows Microsoft login works
-- [ ] Delegated SharePoint access works
-- [ ] Create and read a list item
-- [ ] Update a list item
-- [ ] Correct user identity retrieved
-- [ ] Unauthorised user is denied
+- [x] Windows Microsoft login works
+- [x] Delegated SharePoint access works
+- [x] Create and read a list item
+- [x] Update a list item
+- [x] Correct user identity retrieved
+- [ ] Unauthorised user is denied (**deferred by the project owner on 2026-11-03; must be tested before any module goes to production use or before step 9 is closed**)
 
 Do not start full module work until every box is ticked.
 

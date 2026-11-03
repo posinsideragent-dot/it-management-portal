@@ -57,7 +57,9 @@ Package rule: use maintained packages with verified Windows support. Pin version
 
 ```text
 lib/
-  main.dart, app.dart
+  main.dart, app.dart, spike_main.dart (sign-in spike only)
+  state/         Riverpod providers and the session controller
+  routing/       go_router config and route paths
   core/          authentication, configuration, errors, logging, utilities
   data/          api (graph_client, sharepoint_rest_client, api_error_handler), repositories, dto
   models/        employee, task, time_log, daily_report, issue, project, document, kpi_record
@@ -68,6 +70,21 @@ lib/
   routing/
 windows/  test/  integration_test/  docs/  scripts/
 ```
+
+## App shell and sign-in flow (Phase 1, steps 6-7)
+
+| Part | File | Job |
+|---|---|---|
+| Entry | `lib/main.dart`, `lib/app.dart` | `ProviderScope`, Fluent theme, `go_router` |
+| Providers | `lib/state/providers.dart` | Wires config, auth, Graph client, repositories, session |
+| Session rules | `lib/services/session_service.dart` | Sign in, read `/me`, find the Object ID in `IT_Employees`, block unknown or inactive users |
+| Session state | `lib/services/session_state.dart` | Checking, SignedOut, SigningIn, Blocked, Failed, Active |
+| Router | `lib/routing/app_router.dart` | Redirects signed-out users to the sign-in page. Usability only, not security. |
+| Shell | `lib/shared/layouts/app_shell.dart` | Sidebar, top bar, page body |
+| Pages | `lib/features/*` | Sign in, Dashboard, Time Tracker (placeholder), Settings |
+
+A blocked user's saved session is cleared. A server or network error is shown as a failure and keeps the session, so the user can retry.
+The sign-in spike test page is still available: `flutter run -d windows -t lib/spike_main.dart`.
 
 ## Workspaces
 
