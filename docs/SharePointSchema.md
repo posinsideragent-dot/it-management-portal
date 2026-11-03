@@ -26,6 +26,8 @@ Three groups only. Roles (Management, TeamLead, Employee, Admin) are stored in `
 
 The documentation libraries inherit from the site. There is no separate documentation group.
 
+> **Warning:** create lists with `scripts/Create-ItdmpLists.ps1` (source: `scripts/itdmp_lists.json`). Never use "Create list from Excel": it names columns `field_N`. Keep the JSON file in sync with this document.
+
 ## Naming and relationships
 
 - Relationships use text IDs, not Lookup columns.
