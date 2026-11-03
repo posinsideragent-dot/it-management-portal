@@ -31,7 +31,7 @@ With `Sites.Selected` in the delegated case, access needs two things: the site g
 | Site grant for ITDMP-DEV app | Done 2026-11-02. Role: write. Site ITDMP-DEV only. |
 | List ID: IT_Employees (DEV) | 1b0bf4f3-5ef8-4907-9b99-66231cd23e4b |
 | List ID: IT_PoC_Test (DEV) | 93137a60-b271-41d6-b84c-8666faae6be4 |
-| List ID: IT_Tasks (DEV) | af842724-c698-4402-90ef-04a0905495e8 |
+| List ID: IT_Tasks (DEV) | 7d068025-e4b7-4641-a171-537ff03a440f |
 | Client ID (PROD) | _to fill_ |
 | App owner (company admin) | _to fill_ |
 
@@ -92,3 +92,16 @@ Unknown or inactive users are denied, with a message that names the administrato
 
 Lesson: after adding any test or staff account, run Check Permissions on the site. The in-app check is a usability check only. SharePoint is the real boundary.
 Per-user "own time logs only" enforcement (spec 7.2) is a separate test, still to do before the Time Tracker module.
+
+## DEV list IDs (created by scripts/Create-ItdmpLists.ps1, 2026-11-03)
+
+| List | ID |
+|---|---|
+| IT_Employees | 1b0bf4f3-5ef8-4907-9b99-66231cd23e4b |
+| IT_Tasks | 7d068025-e4b7-4641-a171-537ff03a440f |
+| IT_TimeLogs | 88173a38-5dfe-4e22-be71-1cc97234f4c0 |
+| IT_DailyReports | ab3c6386-b43f-47d8-8c74-561e7025006e |
+| IT_Issues | a36dc426-9285-4fed-9cdf-14323917da19 |
+| IT_Projects | cf974b02-9106-4091-8e08-9036c79b488c |
+| IT_DocumentRegister | 1c950db0-ed66-42b9-a652-3d6eec8e4e1a |
+| IT_KPIRecords | a8290c21-eeee-45a5-870c-2d13923b1d4b |
