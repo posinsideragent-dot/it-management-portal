@@ -1,4 +1,4 @@
-/// Choice values of IT_Tasks. The labels are the exact SharePoint values.
+// Choice values of IT_Tasks. The labels are the exact SharePoint values.
 
 enum TaskStatus {
   newTask('New'),
