@@ -6,12 +6,12 @@ import '../data/api/graph_client.dart';
 import '../data/repositories/employee_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/repositories/task_repository.dart';
-import '../models/employee.dart';
-import '../services/task_service.dart';
 import '../models/app_user.dart';
+import '../models/employee.dart';
 import '../services/employee_service.dart';
 import '../services/session_service.dart';
 import '../services/session_state.dart';
+import '../services/task_service.dart';
 
 /// Which environment the app talks to. Change here to build for PROD later.
 final appConfigProvider = Provider<AppConfig>((ref) => AppConfig.dev);
