@@ -84,8 +84,14 @@ Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values";
 | DocumentationStatus | Choice | Yes | Not Required / Pending / Submitted / Reviewed / Rejected |
 | ReviewedByEmployeeID | Single line text | No | |
 | LastProgressUpdateUTC | Date and time | No | |
+| EstimateRevisionReason | Single line text | No | Added 2026-11-03. Why the estimate was revised. |
+| EstimateApprovedBy | Single line text | No | Added 2026-11-03. EmployeeID of the approving Team Lead. |
+| EstimateApprovedAtUTC | Date and time | No | Added 2026-11-03. |
 
-Optional audit fields (add only if needed, and document it): `EstimateRevisionReason`, `EstimateApprovedBy`, `EstimateApprovedAtUTC`, `TaskClosedBy`, `TaskClosedAtUTC`.
+Still optional (add only if needed, and document it): `TaskClosedBy`, `TaskClosedAtUTC`.
+
+How the app uses `BlockerRemarks`: it holds the reason when a task is put On Hold, Cancelled, or returned from review. The status and SharePoint version history show which one it was.
+A revised estimate waits for approval while `RevisedEstimatedHours` is set and `EstimateApprovedBy` is empty.
 
 Rules:
 

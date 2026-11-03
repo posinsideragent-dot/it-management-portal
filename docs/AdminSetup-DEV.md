@@ -145,6 +145,44 @@ Do this on `IT_Employees` (List settings):
 4. **Choices:** `Department` must hold exactly `IT` and `Development`. `AppRole` must hold exactly `Management`, `TeamLead`, `Employee` and `Admin`.
 5. **Permissions check:** run Site permissions, Check Permissions for every real account. Only the intended groups may give access.
 
+## Part H: Create IT_Tasks (before the Tasks module)
+
+Create the list `IT_Tasks` on ITDMP-DEV (Site contents, New, List, Blank list). Keep the default `Title` column. Add these columns. Use these exact internal names: create each column with no spaces, then rename the display name only if you wish.
+
+| Column | Type | Required | Settings |
+|---|---|---|---|
+| TaskCode | Single line of text | Yes | Indexed, **Enforce unique values** |
+| Description | Multiple lines of text | Yes | Plain text |
+| TaskType | Choice | Yes | Development, Bug Fix, Support, Installation, Maintenance, Research, Internal IT |
+| AssignedEmployeeID | Single line of text | Yes | Indexed |
+| CreatedByEmployeeID | Single line of text | Yes | |
+| ProjectCode | Single line of text | No | Indexed |
+| Priority | Choice | Yes | Low, Normal, High, Critical. Default Normal |
+| Status | Choice | Yes | New, Accepted, In Progress, On Hold, Pending Review, Completed, Cancelled. Default New. Indexed |
+| EstimatedHours | Number | Yes | Min 0 |
+| RevisedEstimatedHours | Number | No | Min 0 |
+| PlannedStart | Date and time | No | Date and time |
+| ExpectedCompletion | Date and time | Yes | Date and time. Indexed |
+| ActualStart | Date and time | No | Date and time |
+| ActualCompletion | Date and time | No | Date and time |
+| Progress | Number | Yes | Min 0, max 100, default 0 |
+| BlockerRemarks | Multiple lines of text | No | Plain text |
+| CompletionRemarks | Multiple lines of text | No | Plain text |
+| DocumentationRequired | Yes/No | Yes | Default Yes |
+| DocumentationStatus | Choice | Yes | Not Required, Pending, Submitted, Reviewed, Rejected. Default Pending |
+| ReviewedByEmployeeID | Single line of text | No | |
+| LastProgressUpdateUTC | Date and time | No | Date and time |
+| EstimateRevisionReason | Single line of text | No | |
+| EstimateApprovedBy | Single line of text | No | |
+| EstimateApprovedAtUTC | Date and time | No | Date and time |
+
+Then:
+
+1. **Indexes:** index `TaskCode`, `AssignedEmployeeID`, `Status`, `ExpectedCompletion` and `ProjectCode`. Set **Enforce unique values** on `TaskCode` (needs the index first).
+2. **Version history:** List settings, Versioning settings, create a version each time an item is edited.
+3. **Permissions:** keep inherited permissions. Check with Check Permissions that a non-member still gets 403.
+4. **Send me the List ID.** Use `https://graph.microsoft.com/v1.0/sites/{site-id}/lists?$filter=displayName eq 'IT_Tasks'` in Graph Explorer, or copy it from the list settings address. I record it in `docs/Authentication.md` and the app config.
+
 ## Done checklist
 
 - [ ] Site `ITDMP-DEV` exists, 2+ owners

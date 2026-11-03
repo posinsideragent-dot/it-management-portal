@@ -10,6 +10,7 @@ class AppConfig {
     required this.siteId,
     required this.employeesListId,
     required this.pocTestListId,
+    required this.tasksListId,
   });
 
   final String environment;
@@ -18,6 +19,9 @@ class AppConfig {
   final String siteId;
   final String employeesListId;
   final String pocTestListId;
+
+  /// IT_Tasks list id. Empty until the admin creates the list (AdminSetup-DEV.md, Part H).
+  final String tasksListId;
 
   /// ITDMP-DEV. Values come from docs/Authentication.md.
   static const dev = AppConfig(
@@ -28,6 +32,7 @@ class AppConfig {
         'sqlacc.sharepoint.com,626945d6-16e9-4fdd-8ad3-993720800677,f601c7c7-e0ff-4907-b2b3-05941f3acecf',
     employeesListId: '1b0bf4f3-5ef8-4907-9b99-66231cd23e4b',
     pocTestListId: '93137a60-b271-41d6-b84c-8666faae6be4',
+    tasksListId: '',
   );
 
   /// Delegated scopes requested at sign-in. Keep this list minimal.
@@ -62,6 +67,32 @@ class SpFields {
   static const joinDate = 'JoinDate';
   static const managerEmployeeId = 'ManagerEmployeeID';
   static const createdAtUtc = 'CreatedAtUTC';
+
+  // IT_Tasks
+  static const taskCode = 'TaskCode';
+  static const description = 'Description';
+  static const taskType = 'TaskType';
+  static const assignedEmployeeId = 'AssignedEmployeeID';
+  static const createdByEmployeeId = 'CreatedByEmployeeID';
+  static const projectCode = 'ProjectCode';
+  static const priority = 'Priority';
+  static const status = 'Status';
+  static const estimatedHours = 'EstimatedHours';
+  static const revisedEstimatedHours = 'RevisedEstimatedHours';
+  static const plannedStart = 'PlannedStart';
+  static const expectedCompletion = 'ExpectedCompletion';
+  static const actualStart = 'ActualStart';
+  static const actualCompletion = 'ActualCompletion';
+  static const progress = 'Progress';
+  static const blockerRemarks = 'BlockerRemarks';
+  static const completionRemarks = 'CompletionRemarks';
+  static const documentationRequired = 'DocumentationRequired';
+  static const documentationStatus = 'DocumentationStatus';
+  static const reviewedByEmployeeId = 'ReviewedByEmployeeID';
+  static const lastProgressUpdateUtc = 'LastProgressUpdateUTC';
+  static const estimateRevisionReason = 'EstimateRevisionReason';
+  static const estimateApprovedBy = 'EstimateApprovedBy';
+  static const estimateApprovedAtUtc = 'EstimateApprovedAtUTC';
 
   // Shared
   static const title = 'Title';
