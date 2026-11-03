@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../data/api/graph_client.dart';
 import '../../models/task_draft.dart';
 import '../../models/task_enums.dart';
@@ -287,7 +288,7 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
             if (error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: Text(error, style: TextStyle(color: Colors.red)),
+                child: Text(error, style: const TextStyle(color: StatusColors.danger)),
               ),
           ],
         ),

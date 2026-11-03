@@ -1,12 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../data/api/graph_client.dart';
 import '../../models/app_role.dart';
 import '../../models/employee.dart';
 import '../../services/employee_access.dart';
 import '../../services/employee_service.dart';
 import '../../shared/layouts/page_frame.dart';
+import '../../shared/widgets/status_chip.dart';
+import '../../shared/widgets/table_parts.dart';
 import '../../state/providers.dart';
 import 'employee_form_dialog.dart';
 import 'employee_list_controller.dart';
@@ -143,7 +146,6 @@ class _Body extends ConsumerWidget {
             ),
           ),
         _HeaderRow(access: access),
-        const Divider(),
         Expanded(
           child: rows.isEmpty
               ? Center(
@@ -194,12 +196,14 @@ class _HeaderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = FluentTheme.of(context).typography.bodyStrong;
-    return Row(
-      children: [
-        for (final (title, flex) in _columns(access))
-          Expanded(flex: flex, child: Text(title, style: style)),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          for (final (title, flex) in _columns(access))
+            TableCell2(flex: flex, child: HeaderText(title)),
+        ],
+      ),
     );
   }
 }
@@ -215,17 +219,16 @@ class _EmployeeRow extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final isSelf = user?.employee.employeeId == employee.employeeId;
 
-    Widget cell(int flex, String text) => Expanded(
+    Widget cell(int flex, String text) => TableCell2(
           flex: flex,
-          child: Text(text, overflow: TextOverflow.ellipsis),
+          child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis),
         );
 
     final cols = _columns(access);
     var i = 0;
     int flexOf() => cols[i++].$2;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+    return RowCard(
       child: Row(
         children: [
           if (access.canSeeDetails) cell(flexOf(), employee.employeeId),
@@ -235,20 +238,24 @@ class _EmployeeRow extends ConsumerWidget {
           cell(flexOf(), employee.department),
           if (access.canSeeDetails) cell(flexOf(), employee.appRole),
           if (access.canSeeDetails)
-            Expanded(
+            TableCell2(
               flex: flexOf(),
-              child: Text(
-                employee.isActive ? 'Active' : 'Inactive',
-                style: TextStyle(
-                  color: employee.isActive ? Colors.green : Colors.grey,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: StatusChip(
+                  label: employee.isActive ? 'Active' : 'Inactive',
+                  color: employee.isActive
+                      ? StatusColors.success
+                      : StatusColors.neutral,
                 ),
               ),
             ),
           if (access.canManage)
-            Expanded(
+            TableCell2(
               flex: flexOf(),
               child: Wrap(
                 spacing: 8,
+                runSpacing: 6,
                 children: [
                   Button(
                     onPressed: () => showDialog<bool>(

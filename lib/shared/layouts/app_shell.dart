@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../routing/app_router.dart';
 import '../../services/session_state.dart';
 import '../../state/providers.dart';
+import '../../state/ui_state.dart';
 
 /// Sidebar plus top bar around every signed-in page.
 class AppShell extends ConsumerWidget {
@@ -28,17 +29,65 @@ class AppShell extends ConsumerWidget {
         ? mainIndex
         : (footerIndex >= 0 ? _mainPaths.length + footerIndex : 0);
 
+    final expanded = ref.watch(sidebarExpandedProvider);
+    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
+
+    return LayoutBuilder(builder: (context, constraints) {
+      // Narrow windows always show the icon-only sidebar.
+      final narrow = constraints.maxWidth < _narrowWidth;
+      final showLabels = expanded && !narrow;
+      return _buildView(
+        context, ref,
+        showLabels: showLabels,
+        isDark: isDark,
+        environment: config.environment,
+        userName: userName,
+        selected: selected,
+      );
+    });
+  }
+
+  static const _narrowWidth = 900.0;
+
+  Widget _buildView(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool showLabels,
+    required bool isDark,
+    required String environment,
+    required String userName,
+    required int selected,
+  }) {
     return NavigationView(
       // fluent_ui 4.14+ replaced NavigationAppBar with a plain `titleBar` widget.
       titleBar: SizedBox(
         height: 48,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
-              Text('ITDMP  (${config.environment})'),
+              Tooltip(
+                message: showLabels ? 'Collapse menu' : 'Expand menu',
+                child: IconButton(
+                  icon: const Icon(FluentIcons.global_nav_button),
+                  onPressed: ref.read(sidebarExpandedProvider.notifier).toggle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text('ITDMP', style: FluentTheme.of(context).typography.bodyStrong),
+              const SizedBox(width: 8),
+              Text('($environment)'),
               const Spacer(),
+              Tooltip(
+                message: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+                child: IconButton(
+                  icon: Icon(isDark ? FluentIcons.sunny : FluentIcons.clear_night),
+                  onPressed: ref.read(themeModeProvider.notifier).toggle,
+                ),
+              ),
+              const SizedBox(width: 8),
               Text(userName),
+              const SizedBox(width: 8),
             ],
           ),
         ),
@@ -46,7 +95,8 @@ class AppShell extends ConsumerWidget {
       paneBodyBuilder: (item, body) => child,
       pane: NavigationPane(
         selected: selected,
-        displayMode: PaneDisplayMode.expanded,
+        displayMode:
+            showLabels ? PaneDisplayMode.expanded : PaneDisplayMode.compact,
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.home),

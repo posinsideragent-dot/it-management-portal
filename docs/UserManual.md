@@ -35,3 +35,9 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - **Approving** needs completion remarks. If documentation is required, it must be submitted or waived first (the documentation step comes in the next release, so tasks that need documentation cannot be approved yet).
 - **My tasks** shows only tasks assigned to you. The status filter and My tasks run in SharePoint. Search looks at the loaded rows only.
 - A red due date means the task is overdue.
+
+## Look and layout
+
+- The app opens in dark mode. Use the sun or moon button in the top bar, or Settings, to switch.
+- The menu button at the top left collapses the sidebar to icons or expands it. Narrow windows always show icons only.
+- On narrow windows the Tasks table becomes stacked cards. Widen the window to see the full table.

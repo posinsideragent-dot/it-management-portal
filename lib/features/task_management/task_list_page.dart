@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../core/utilities/malaysia_time.dart';
 import '../../models/employee.dart';
 import '../../models/task_enums.dart';
@@ -8,6 +9,8 @@ import '../../models/task_item.dart';
 import '../../services/task_access.dart';
 import '../../services/task_workflow.dart';
 import '../../shared/layouts/page_frame.dart';
+import '../../shared/widgets/status_chip.dart';
+import '../../shared/widgets/table_parts.dart';
 import '../../state/providers.dart';
 import 'task_form_dialog.dart';
 import 'task_list_controller.dart';
@@ -139,22 +142,37 @@ class _Body extends ConsumerWidget {
               severity: InfoBarSeverity.warning,
             ),
           ),
-        const _HeaderRow(),
-        const Divider(),
         Expanded(
-          child: rows.isEmpty
-              ? Center(
-                  child: Text(
-                    state.items.isEmpty
-                        ? 'No tasks found.'
-                        : 'No loaded task matches the search.'
-                            '${state.hasMore ? ' Load more to search further.' : ''}',
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth >= kWideTableMinWidth;
+              return Column(
+                children: [
+                  if (wide)
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: _HeaderRow(),
+                    ),
+                  Expanded(
+                    child: rows.isEmpty
+                        ? Center(
+                            child: Text(
+                              state.items.isEmpty
+                                  ? 'No tasks found.'
+                                  : 'No loaded task matches the search.'
+                                      '${state.hasMore ? ' Load more to search further.' : ''}',
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: rows.length,
+                            itemBuilder: (context, i) =>
+                                _TaskRow(task: rows[i], wide: wide),
+                          ),
                   ),
-                )
-              : ListView.builder(
-                  itemCount: rows.length,
-                  itemBuilder: (context, i) => _TaskRow(task: rows[i]),
-                ),
+                ],
+              );
+            },
+          ),
         ),
         if (state.hasMore)
           Padding(
@@ -189,20 +207,20 @@ class _HeaderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = FluentTheme.of(context).typography.bodyStrong;
     return Row(
       children: [
         for (final (title, flex) in _columns)
-          Expanded(flex: flex, child: Text(title, style: style)),
+          TableCell2(flex: flex, child: HeaderText(title)),
       ],
     );
   }
 }
 
 class _TaskRow extends ConsumerWidget {
-  const _TaskRow({required this.task});
+  const _TaskRow({required this.task, required this.wide});
 
   final TaskItem task;
+  final bool wide;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -210,88 +228,145 @@ class _TaskRow extends ConsumerWidget {
     final names = _names(ref.watch(activeEmployeesProvider).value);
     final actors =
         user == null ? <TaskActor>{} : TaskAccess.actorsFor(user, task);
-    final moves = TaskWorkflow.movesFor(task.status, actors);
-    final canEdit = actors.contains(TaskActor.lead) && !task.status.isFinal;
-    final canProgress =
-        actors.contains(TaskActor.assignee) &&
-        task.status == TaskStatus.inProgress;
+    final assignee = names[task.assignedEmployeeId] ?? task.assignedEmployeeId;
     final overdue = !task.status.isFinal &&
         task.expectedCompletion.isBefore(DateTime.now().toUtc());
+    final due = formatMalaysiaTime(task.expectedCompletion);
+    final dueColor = overdue ? StatusColors.danger : null;
+    final actions = _actions(context, actors);
 
-    Widget cell(int index, Widget child) =>
-        Expanded(flex: _columns[index].$2, child: child);
-    Widget text(int index, String value, {Color? color}) => cell(
-          index,
-          Text(
+    if (!wide) {
+      return RowCard(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    task.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: FluentTheme.of(context).typography.bodyStrong,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _statusChip(),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text('${task.taskCode}  \u00b7  $assignee  \u00b7  ${task.priority.label}'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text('Due $due', style: TextStyle(color: dueColor)),
+                const SizedBox(width: 16),
+                Text('${_hours(task.estimatedHours)} h'),
+                const SizedBox(width: 16),
+                Expanded(child: _progress()),
+              ],
+            ),
+            if (actions != null) ...[const SizedBox(height: 10), actions],
+          ],
+        ),
+      );
+    }
+
+    Widget text(int index, String value, {Color? color}) => TableCell2(
+          flex: _columns[index].$2,
+          child: Text(
             value,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: color == null ? null : TextStyle(color: color),
           ),
         );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+    return RowCard(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           text(0, task.taskCode),
           text(1, task.title),
-          text(2, names[task.assignedEmployeeId] ?? task.assignedEmployeeId),
+          text(2, assignee),
           text(3, task.priority.label),
-          cell(4, _statusLabel()),
-          text(5, _hours(task.estimatedHours)),
-          text(
-            6,
-            formatMalaysiaTime(task.expectedCompletion),
-            color: overdue ? Colors.red : null,
+          TableCell2(
+            flex: _columns[4].$2,
+            child: Align(alignment: Alignment.centerLeft, child: _statusChip()),
           ),
-          text(7, '${task.progress}%'),
-          cell(
-            8,
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                if (canEdit)
-                  Button(
-                    onPressed: () => showDialog<bool>(
-                      context: context,
-                      builder: (_) => TaskFormDialog(existing: task),
-                    ),
-                    child: const Text('Edit'),
-                  ),
-                for (final move in moves)
-                  Button(
-                    onPressed: () => showDialog<bool>(
-                      context: context,
-                      builder: (_) => TaskStatusDialog(task: task, move: move),
-                    ),
-                    child: Text(move.label),
-                  ),
-                if (canProgress)
-                  Button(
-                    onPressed: () => showDialog<bool>(
-                      context: context,
-                      builder: (_) => TaskProgressDialog(task: task),
-                    ),
-                    child: const Text('Progress'),
-                  ),
-              ],
-            ),
+          text(5, _hours(task.estimatedHours)),
+          text(6, due, color: dueColor),
+          TableCell2(flex: _columns[7].$2, child: _progress()),
+          TableCell2(
+            flex: _columns[8].$2,
+            child: actions ?? const SizedBox.shrink(),
           ),
         ],
       ),
     );
   }
 
-  /// The status text. Hover shows the last reason (hold, cancel, return).
-  Widget _statusLabel() {
-    final label = Text(
-      task.status.label,
-      style: TextStyle(color: _statusColor(task.status)),
+  /// Edit, status moves and progress. Null when the user has none.
+  Widget? _actions(BuildContext context, Set<TaskActor> actors) {
+    final moves = TaskWorkflow.movesFor(task.status, actors);
+    final canEdit = actors.contains(TaskActor.lead) && !task.status.isFinal;
+    final canProgress =
+        actors.contains(TaskActor.assignee) &&
+        task.status == TaskStatus.inProgress;
+    if (!canEdit && moves.isEmpty && !canProgress) return null;
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 6,
+      children: [
+        if (canEdit)
+          Button(
+            onPressed: () => showDialog<bool>(
+              context: context,
+              builder: (_) => TaskFormDialog(existing: task),
+            ),
+            child: const Text('Edit'),
+          ),
+        for (final move in moves)
+          Button(
+            onPressed: () => showDialog<bool>(
+              context: context,
+              builder: (_) => TaskStatusDialog(task: task, move: move),
+            ),
+            child: Text(move.label),
+          ),
+        if (canProgress)
+          Button(
+            onPressed: () => showDialog<bool>(
+              context: context,
+              builder: (_) => TaskProgressDialog(task: task),
+            ),
+            child: const Text('Progress'),
+          ),
+      ],
     );
-    if (task.blockerRemarks.isEmpty) return label;
-    return Tooltip(message: task.blockerRemarks, child: label);
+  }
+
+  Widget _progress() => Row(
+        children: [
+          Expanded(child: ProgressBar(value: task.progress.toDouble())),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 40,
+            child: Text('${task.progress}%', maxLines: 1),
+          ),
+        ],
+      );
+
+  /// The status chip. Hover shows the last reason (hold, cancel, return).
+  Widget _statusChip() {
+    final chip = StatusChip(
+      label: task.status.label,
+      color: _statusColor(task.status),
+    );
+    if (task.blockerRemarks.isEmpty) return chip;
+    return Tooltip(message: task.blockerRemarks, child: chip);
   }
 
   Map<String, String> _names(List<Employee>? employees) => {
@@ -301,11 +376,12 @@ class _TaskRow extends ConsumerWidget {
   String _hours(double value) =>
       value == value.roundToDouble() ? value.toInt().toString() : '$value';
 
-  Color? _statusColor(TaskStatus status) => switch (status) {
-        TaskStatus.completed => Colors.green,
-        TaskStatus.cancelled => Colors.grey,
-        TaskStatus.onHold => Colors.orange,
-        TaskStatus.pendingReview => Colors.blue,
-        _ => null,
+  Color _statusColor(TaskStatus status) => switch (status) {
+        TaskStatus.completed => StatusColors.success,
+        TaskStatus.cancelled => StatusColors.neutral,
+        TaskStatus.onHold => StatusColors.warning,
+        TaskStatus.pendingReview => StatusColors.info,
+        TaskStatus.inProgress => StatusColors.active,
+        _ => StatusColors.neutral,
       };
 }
