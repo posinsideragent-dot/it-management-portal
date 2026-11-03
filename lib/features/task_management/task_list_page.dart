@@ -207,7 +207,7 @@ class _TaskRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-    final names = _names(ref.watch(activeEmployeesProvider).valueOrNull);
+    final names = _names(ref.watch(activeEmployeesProvider).value);
     final actors =
         user == null ? <TaskActor>{} : TaskAccess.actorsFor(user, task);
     final moves = TaskWorkflow.movesFor(task.status, actors);
@@ -238,16 +238,7 @@ class _TaskRow extends ConsumerWidget {
           text(1, task.title),
           text(2, names[task.assignedEmployeeId] ?? task.assignedEmployeeId),
           text(3, task.priority.label),
-          cell(
-            4,
-            Tooltip(
-              message: task.blockerRemarks.isEmpty ? '' : task.blockerRemarks,
-              child: Text(
-                task.status.label,
-                style: TextStyle(color: _statusColor(task.status)),
-              ),
-            ),
-          ),
+          cell(4, _statusLabel()),
           text(5, _hours(task.estimatedHours)),
           text(
             6,
@@ -291,6 +282,16 @@ class _TaskRow extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// The status text. Hover shows the last reason (hold, cancel, return).
+  Widget _statusLabel() {
+    final label = Text(
+      task.status.label,
+      style: TextStyle(color: _statusColor(task.status)),
+    );
+    if (task.blockerRemarks.isEmpty) return label;
+    return Tooltip(message: task.blockerRemarks, child: label);
   }
 
   Map<String, String> _names(List<Employee>? employees) => {
