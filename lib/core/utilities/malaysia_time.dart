@@ -24,3 +24,9 @@ DateTime malaysiaWallClockToUtc(
   int minute = 0,
 ]) =>
     DateTime.utc(year, month, day, hour, minute).subtract(malaysiaOffset);
+
+/// The UTC moment when the Malaysia calendar day containing [value] began.
+DateTime malaysiaDayStartUtc(DateTime value) {
+  final m = toMalaysiaTime(value);
+  return DateTime.utc(m.year, m.month, m.day).subtract(malaysiaOffset);
+}

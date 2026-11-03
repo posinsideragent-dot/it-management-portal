@@ -1,4 +1,5 @@
 import '../core/configuration/app_config.dart';
+import '../core/errors/rule_violation.dart';
 import '../core/utilities/malaysia_time.dart';
 import '../data/api/graph_client.dart';
 import '../data/repositories/employee_repository.dart';
@@ -15,12 +16,13 @@ import 'task_validator.dart';
 import 'task_workflow.dart';
 
 /// A task business rule was broken. [message] is safe to show to the user.
-class TaskRuleException implements Exception {
+class TaskRuleException implements RuleViolation {
   TaskRuleException(
     this.message, {
     this.fieldErrors = const <TaskFormField, String>{},
   });
 
+  @override
   final String message;
   final Map<TaskFormField, String> fieldErrors;
 

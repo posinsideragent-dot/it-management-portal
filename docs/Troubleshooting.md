@@ -24,3 +24,6 @@ Status: in progress. See also the table at the end of `SpikeRunbook.md`.
 | A task shows 1 Jan 1970 as due date | `ExpectedCompletion` is empty on that row. Fill it in SharePoint. |
 | "A provided field name is not recognized" when saving | The list was created with "From Excel", so its columns are named `field_N`. Check with `/_api/web/lists/getbytitle('IT_Tasks')/fields?$select=InternalName,Title&$filter=Hidden eq false`. Delete the list and recreate it with `scripts/Create-ItdmpLists.ps1` (AdminSetup-DEV.md Part I). |
 | Estimate or documentation action fails with "field name is not recognized" | `ProposedEstimatedHours` or `DocumentationRemarks` is missing in IT_Tasks. Run the script for IT_Tasks (AdminSetup-DEV.md Part J). |
+| Start fails with a duplicate or "already have a timer" | A timer is already running, possibly on another PC. Open Time Tracker, then Pause or End it. If none is shown, check `ActiveTimerKey` in IT_TimeLogs (the old row must have an empty key). |
+| Time Tracker fails with HTTP 400 mentioning an index | `EmployeeID`, `TaskCode`, `StartTimeUTC`, `TimerStatus` or `ActiveTimerKey` is not indexed in IT_TimeLogs. Re-run the list script. |
+| Timer cannot be ended: "clock is earlier than the start time" | This PC's date or time is wrong. Fix it and try again. |

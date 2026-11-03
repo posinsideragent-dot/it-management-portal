@@ -11,6 +11,7 @@ class AppConfig {
     required this.employeesListId,
     required this.pocTestListId,
     required this.tasksListId,
+    required this.timeLogsListId,
   });
 
   final String environment;
@@ -23,6 +24,9 @@ class AppConfig {
   /// IT_Tasks list id. Empty until the admin creates the list (AdminSetup-DEV.md, Part H).
   final String tasksListId;
 
+  /// IT_TimeLogs list id.
+  final String timeLogsListId;
+
   /// ITDMP-DEV. Values come from docs/Authentication.md.
   static const dev = AppConfig(
     environment: 'DEV',
@@ -33,6 +37,7 @@ class AppConfig {
     employeesListId: '1b0bf4f3-5ef8-4907-9b99-66231cd23e4b',
     pocTestListId: '93137a60-b271-41d6-b84c-8666faae6be4',
     tasksListId: '7d068025-e4b7-4641-a171-537ff03a440f',
+    timeLogsListId: '88173a38-5dfe-4e22-be71-1cc97234f4c0',
   );
 
   /// Delegated scopes requested at sign-in. Keep this list minimal.
@@ -95,6 +100,17 @@ class SpFields {
   static const estimateApprovedAtUtc = 'EstimateApprovedAtUTC';
   static const proposedEstimatedHours = 'ProposedEstimatedHours';
   static const documentationRemarks = 'DocumentationRemarks';
+
+  // IT_TimeLogs
+  static const timeLogCode = 'TimeLogCode';
+  static const startTimeUtc = 'StartTimeUTC';
+  static const endTimeUtc = 'EndTimeUTC';
+  static const durationMinutes = 'DurationMinutes';
+  static const timerStatus = 'TimerStatus';
+  static const activeTimerKey = 'ActiveTimerKey';
+  static const activityDescription = 'ActivityDescription';
+  static const workResult = 'WorkResult';
+  static const isDeleted = 'IsDeleted';
 
   // Shared
   static const title = 'Title';

@@ -49,3 +49,14 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - If a task needs documentation, the assigned person chooses **Submit documentation** and says where it is. A Team Lead chooses **Accept documentation** or **Send back** (with a reason). A Team Lead can also **Waive** it with a reason.
 - A task cannot be approved as Completed until documentation is accepted, submitted or waived.
 - A dot on the Details button means you have a step to do on that task.
+
+## Time Tracker
+
+- Open **Time Tracker** in the sidebar. It lists your tasks that are In Progress. Accept a task and choose **Start work** on the Tasks page first.
+- **Start** begins a timer on a task. You can have only one timer at a time, on any PC.
+- **Pause** stops the timer for now. **Resume** starts a new segment on the same task. **End job** stops the timer and asks what you did.
+- While a timer runs, the top bar shows the task and the elapsed time. Click it to open the Time Tracker.
+- If the app closes or the PC restarts, the timer keeps running. The app reads it from SharePoint when you sign in again.
+- Ending a timer does not change the task status. Use **Submit for review** on the Tasks page when the work is finished.
+- After a restart the app no longer remembers which task you paused. Press **Start** on the task again.
+- Times come from your PC clock. Keep the clock correct.

@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+import '../../core/errors/rule_violation.dart';
 import '../../data/api/graph_client.dart';
-import '../../services/task_service.dart';
 
 /// What the person typed into [TaskActionDialog].
 class TaskActionInput {
@@ -12,7 +12,8 @@ class TaskActionInput {
   final String text;
 }
 
-/// One small dialog used by the step 2 actions (revisions and documentation).
+/// One small dialog used for actions that need a reason or a number
+/// (task revisions, documentation, ending a timer).
 /// It shows an optional hours box and an optional text box, runs [onConfirm],
 /// and shows any rule or SharePoint error inside the dialog.
 /// Pops `true` when the action was saved.
@@ -64,7 +65,7 @@ class _TaskActionDialogState extends State<TaskActionDialog> {
         ),
       );
       if (mounted) Navigator.pop(context, true);
-    } on TaskRuleException catch (e) {
+    } on RuleViolation catch (e) {
       if (mounted) setState(() => _message = e.message);
     } on GraphException catch (e) {
       if (mounted) setState(() => _message = e.userMessage);

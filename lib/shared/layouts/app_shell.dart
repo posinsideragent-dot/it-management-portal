@@ -2,10 +2,14 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_theme.dart';
+import '../../features/time_tracking/time_tracker_controller.dart';
+import '../../models/time_log.dart';
 import '../../routing/app_router.dart';
 import '../../services/session_state.dart';
 import '../../state/providers.dart';
 import '../../state/ui_state.dart';
+import '../widgets/elapsed_text.dart';
 
 /// Sidebar plus top bar around every signed-in page.
 class AppShell extends ConsumerWidget {
@@ -29,6 +33,8 @@ class AppShell extends ConsumerWidget {
         ? mainIndex
         : (footerIndex >= 0 ? _mainPaths.length + footerIndex : 0);
 
+    // Watching this also reads the running timer from SharePoint at sign-in.
+    final activeTimer = ref.watch(timeTrackerControllerProvider).active;
     final expanded = ref.watch(sidebarExpandedProvider);
     final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
 
@@ -43,6 +49,7 @@ class AppShell extends ConsumerWidget {
         environment: config.environment,
         userName: userName,
         selected: selected,
+        activeTimer: activeTimer,
       );
     });
   }
@@ -57,6 +64,7 @@ class AppShell extends ConsumerWidget {
     required String environment,
     required String userName,
     required int selected,
+    required TimeLog? activeTimer,
   }) {
     return NavigationView(
       // fluent_ui 4.14+ replaced NavigationAppBar with a plain `titleBar` widget.
@@ -78,6 +86,10 @@ class AppShell extends ConsumerWidget {
               const SizedBox(width: 8),
               Text('($environment)'),
               const Spacer(),
+              if (activeTimer != null) ...[
+                _TimerChip(log: activeTimer),
+                const SizedBox(width: 12),
+              ],
               Tooltip(
                 message: isDark ? 'Switch to light mode' : 'Switch to dark mode',
                 child: IconButton(
@@ -131,6 +143,32 @@ class AppShell extends ConsumerWidget {
             onTap: () => context.go(AppRoutes.settings),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Shows the running timer in the top bar. Click to open the Time Tracker.
+class _TimerChip extends StatelessWidget {
+  const _TimerChip({required this.log});
+
+  final TimeLog log;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Open the Time Tracker',
+      child: HyperlinkButton(
+        onPressed: () => context.go(AppRoutes.timeTracker),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(FluentIcons.circle_fill, size: 8, color: StatusColors.active),
+            const SizedBox(width: 8),
+            Text('${log.taskCode}  '),
+            ElapsedText(startUtc: log.startUtc),
+          ],
+        ),
       ),
     );
   }

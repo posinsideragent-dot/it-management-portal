@@ -81,7 +81,7 @@ windows/  test/  integration_test/  docs/  scripts/
 | Session state | `lib/services/session_state.dart` | Checking, SignedOut, SigningIn, Blocked, Failed, Active |
 | Router | `lib/routing/app_router.dart` | Redirects signed-out users to the sign-in page. Usability only, not security. |
 | Shell | `lib/shared/layouts/app_shell.dart` | Sidebar, top bar, page body |
-| Pages | `lib/features/*` | Sign in, Dashboard, Time Tracker (placeholder), Settings |
+| Pages | `lib/features/*` | Sign in, Dashboard, Time Tracker (start, pause, resume, end), Settings |
 
 A blocked user's saved session is cleared. A server or network error is shown as a failure and keeps the session, so the user can retry.
 The sign-in spike test page is still available: `flutter run -d windows -t lib/spike_main.dart`.
@@ -118,7 +118,7 @@ Decisions:
 - **Reasons** for hold, cancel and return are saved in `BlockerRemarks` with a prefix (`On hold:`, `Cancelled:`, `Returned:`). Version history keeps the earlier text.
 - **TaskCode** is the highest code plus one, restarting each Malaysia year. SharePoint rejects duplicates, and the service retries up to 3 times.
 - **Original estimate** is editable only while the task is New. Revised estimates arrive in step 2.
-- **Actual hours** are not shown yet. They must come from time logs (Time Tracker module).
+- **Actual hours** are not shown yet. They must come from time logs. Time Tracker step 2 adds the per-task total.
 - Server-side filters: Status and AssignedEmployeeID (indexed). Search runs on loaded rows.
 
 ## Workspaces
