@@ -57,6 +57,11 @@ class SpFields {
   static const entraObjectId = 'EntraObjectID';
   static const appRole = 'AppRole';
   static const isActive = 'IsActive';
+  static const jobTitle = 'JobTitle';
+  static const department = 'Department';
+  static const joinDate = 'JoinDate';
+  static const managerEmployeeId = 'ManagerEmployeeID';
+  static const createdAtUtc = 'CreatedAtUTC';
 
   // Shared
   static const title = 'Title';

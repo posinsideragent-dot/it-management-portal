@@ -5,6 +5,8 @@ import '../core/configuration/app_config.dart';
 import '../data/api/graph_client.dart';
 import '../data/repositories/employee_repository.dart';
 import '../data/repositories/profile_repository.dart';
+import '../models/app_user.dart';
+import '../services/employee_service.dart';
 import '../services/session_service.dart';
 import '../services/session_state.dart';
 
@@ -66,3 +68,19 @@ class SessionController extends Notifier<SessionState> {
 
 final sessionControllerProvider =
     NotifierProvider<SessionController, SessionState>(SessionController.new);
+
+// --- Employees module ---
+
+/// The signed-in person, or null when nobody is signed in.
+final currentUserProvider = Provider<AppUser?>((ref) {
+  final session = ref.watch(sessionControllerProvider);
+  return session is SessionActive ? session.user : null;
+});
+
+final employeeDirectoryProvider = Provider<EmployeeDirectory>(
+  (ref) => ref.watch(employeeRepositoryProvider),
+);
+
+final employeeServiceProvider = Provider<EmployeeService>(
+  (ref) => EmployeeService(ref.watch(employeeDirectoryProvider)),
+);

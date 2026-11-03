@@ -56,7 +56,7 @@ The documentation libraries inherit from the site. There is no separate document
 | ManagerEmployeeID | Single line text | No | |
 | CreatedAtUTC | Date and time | No | App-maintained |
 
-Rules: EmployeeID and EntraObjectID are unique. Inactive employees cannot start jobs. Never delete historical records.
+Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values"; this needs the index). Turn on version history for this list: it is the audit trail. Inactive employees cannot start jobs. Never delete historical records.
 
 ## List 2: IT_Tasks
 
@@ -237,6 +237,7 @@ Never store passwords, API secrets, private keys or admin credentials in documen
 
 | List | Index these columns |
 |---|---|
+| IT_Employees | EmployeeID, EntraObjectID, Email, IsActive |
 | IT_Tasks | TaskCode, AssignedEmployeeID, Status, ExpectedCompletion, ProjectCode |
 | IT_TimeLogs | TimeLogCode, EmployeeID, TaskCode, StartTimeUTC, TimerStatus, ActiveTimerKey |
 | IT_DailyReports | ReportCode, EmployeeID, ReportDate, SubmissionStatus |

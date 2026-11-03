@@ -13,7 +13,7 @@ class AppShell extends ConsumerWidget {
   final String location;
   final Widget child;
 
-  static const _mainPaths = [AppRoutes.dashboard, AppRoutes.timeTracker];
+  static const _mainPaths = [AppRoutes.dashboard, AppRoutes.employees, AppRoutes.timeTracker];
   static const _footerPaths = [AppRoutes.settings];
 
   @override
@@ -53,6 +53,12 @@ class AppShell extends ConsumerWidget {
             title: const Text('Dashboard'),
             body: const SizedBox.shrink(),
             onTap: () => context.go(AppRoutes.dashboard),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.people),
+            title: const Text('Employees'),
+            body: const SizedBox.shrink(),
+            onTap: () => context.go(AppRoutes.employees),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.timer),
