@@ -105,3 +105,11 @@ Per-user "own time logs only" enforcement (spec 7.2) is a separate test, still t
 | IT_Projects | cf974b02-9106-4091-8e08-9036c79b488c |
 | IT_DocumentRegister | 1c950db0-ed66-42b9-a652-3d6eec8e4e1a |
 | IT_KPIRecords | a8290c21-eeee-45a5-870c-2d13923b1d4b |
+
+## PROD list IDs (ITDMP-PROD)
+
+Site: https://sqlacc.sharepoint.com/sites/ITDMP-PROD
+IT_Projects 2fc1ef4d-379b-41ca-b67a-0528fb4ce291
+IT_DocumentRegister d14ed001-de3a-484f-9bc2-c65330904b8c
+IT_KPIRecords 12ea297e-df6c-449d-b16b-7a791a4263f7
+(The other IDs are in `AppConfig.prod`.)
