@@ -187,7 +187,7 @@ Then:
 
 ## Part J: Two more IT_Tasks columns (Tasks step 2)
 
-Run `.\scripts\Create-ItdmpLists.ps1 -Lists IT_Tasks -UseDeviceCode`. It adds only the missing columns: `ProposedEstimatedHours` (Number, min 0) and `DocumentationRemarks` (Multiple lines of text). Do not rename them.
+Run `.\scripts\Create-ItdmpLists.ps1 -Lists IT_Tasks -UseDeviceCode`. It adds only the missing columns: `ProposedEstimatedHours` (Number, min 0), `DocumentationRemarks` (Multiple lines of text), `AcceptedAtUTC`, `SubmittedAtUTC`, `HoldStartedAtUTC` (Date and time) and `HeldMinutes` (Number, min 0). Do not rename them.
 
 ## Part I: Create the lists with the script (replaces Excel import)
 

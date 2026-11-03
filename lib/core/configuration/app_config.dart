@@ -12,6 +12,7 @@ class AppConfig {
     required this.pocTestListId,
     required this.tasksListId,
     required this.timeLogsListId,
+    this.showTimeTracker = true,
   });
 
   final String environment;
@@ -26,6 +27,10 @@ class AppConfig {
 
   /// IT_TimeLogs list id.
   final String timeLogsListId;
+
+  /// Shows the Time Tracker in the sidebar and top bar. When false the page
+  /// is hidden and no timer is read. The code stays in place.
+  final bool showTimeTracker;
 
   /// ITDMP-DEV. Values come from docs/Authentication.md.
   static const dev = AppConfig(
@@ -99,6 +104,10 @@ class SpFields {
   static const estimateApprovedBy = 'EstimateApprovedBy';
   static const estimateApprovedAtUtc = 'EstimateApprovedAtUTC';
   static const proposedEstimatedHours = 'ProposedEstimatedHours';
+  static const acceptedAtUtc = 'AcceptedAtUTC';
+  static const submittedAtUtc = 'SubmittedAtUTC';
+  static const holdStartedAtUtc = 'HoldStartedAtUTC';
+  static const heldMinutes = 'HeldMinutes';
   static const documentationRemarks = 'DocumentationRemarks';
 
   // IT_TimeLogs

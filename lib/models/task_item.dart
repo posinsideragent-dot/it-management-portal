@@ -33,6 +33,10 @@ class TaskItem {
     this.estimateApprovedAtUtc,
     this.proposedEstimatedHours,
     this.documentationRemarks = '',
+    this.acceptedAtUtc,
+    this.submittedAtUtc,
+    this.holdStartedAtUtc,
+    this.heldMinutes = 0,
   });
 
   /// SharePoint list item id.
@@ -82,6 +86,19 @@ class TaskItem {
   final String estimateApprovedBy;
   final DateTime? estimateApprovedAtUtc;
 
+  /// When the assignee accepted the task.
+  final DateTime? acceptedAtUtc;
+
+  /// When the task was last submitted for review. Cleared when it is
+  /// returned for rework, and set again on the next submit.
+  final DateTime? submittedAtUtc;
+
+  /// When the task was put On Hold. Cleared on resume.
+  final DateTime? holdStartedAtUtc;
+
+  /// Office minutes spent On Hold or waiting in review. Not work time.
+  final double heldMinutes;
+
   /// True when a revised estimate is waiting for Team Lead approval.
   bool get hasPendingRevision => proposedEstimatedHours != null;
 
@@ -127,6 +144,10 @@ class TaskItem {
       estimateApprovedAtUtc: _utc(f[SpFields.estimateApprovedAtUtc]),
       proposedEstimatedHours: _number(f[SpFields.proposedEstimatedHours]),
       documentationRemarks: text(SpFields.documentationRemarks),
+      acceptedAtUtc: _utc(f[SpFields.acceptedAtUtc]),
+      submittedAtUtc: _utc(f[SpFields.submittedAtUtc]),
+      holdStartedAtUtc: _utc(f[SpFields.holdStartedAtUtc]),
+      heldMinutes: _number(f[SpFields.heldMinutes]) ?? 0,
     );
   }
 }

@@ -262,6 +262,27 @@
           "name": "DocumentationRemarks",
           "type": "multiline",
           "required": false
+        },
+        {
+          "name": "AcceptedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "SubmittedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "HoldStartedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "HeldMinutes",
+          "type": "number",
+          "required": false,
+          "min": 0
         }
       ]
     },

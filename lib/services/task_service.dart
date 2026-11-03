@@ -1,6 +1,7 @@
 import '../core/configuration/app_config.dart';
 import '../core/errors/rule_violation.dart';
 import '../core/utilities/malaysia_time.dart';
+import '../core/utilities/office_hours.dart';
 import '../data/api/graph_client.dart';
 import '../data/repositories/employee_repository.dart';
 import '../data/repositories/task_repository.dart';
@@ -40,11 +41,14 @@ class TaskService {
     this._tasks,
     this._employees, {
     DateTime Function()? clock,
-  }) : _now = clock ?? DateTime.now;
+    OfficeHours office = OfficeHours.standard,
+  })  : _now = clock ?? DateTime.now,
+        _office = office;
 
   final TaskDirectory _tasks;
   final EmployeeDirectory _employees;
   final DateTime Function() _now;
+  final OfficeHours _office;
 
   static const _maxCreateAttempts = 3;
 
@@ -160,19 +164,39 @@ class TaskService {
       SpFields.lastProgressUpdateUtc: now,
     };
 
+    final nowUtc = _now().toUtc();
     switch (to) {
       case TaskStatus.inProgress:
         // First start only. Later restarts keep the first date.
         if (current.actualStart == null) fields[SpFields.actualStart] = now;
+        if (current.status == TaskStatus.onHold) {
+          // Time On Hold is not work time.
+          final heldFrom = current.holdStartedAtUtc;
+          if (heldFrom != null) {
+            fields[SpFields.heldMinutes] = _addHeld(current, heldFrom, nowUtc);
+          }
+          fields[SpFields.holdStartedAtUtc] = null;
+        }
         if (current.status == TaskStatus.pendingReview) {
           fields[SpFields.blockerRemarks] = 'Returned: $text';
+          // Waiting in review is not work time either.
+          final heldFrom = current.submittedAtUtc;
+          if (heldFrom != null) {
+            fields[SpFields.heldMinutes] = _addHeld(current, heldFrom, nowUtc);
+          }
+          fields[SpFields.submittedAtUtc] = null;
         }
       case TaskStatus.onHold:
         fields[SpFields.blockerRemarks] = 'On hold: $text';
+        // Only a task that has started has hours to hold back.
+        if (current.actualStart != null) {
+          fields[SpFields.holdStartedAtUtc] = now;
+        }
       case TaskStatus.cancelled:
         fields[SpFields.blockerRemarks] = 'Cancelled: $text';
       case TaskStatus.pendingReview:
         fields[SpFields.completionRemarks] = text;
+        fields[SpFields.submittedAtUtc] = now;
       case TaskStatus.completed:
         if (current.completionRemarks.trim().isEmpty) {
           throw TaskRuleException('Completion remarks are missing.');
@@ -186,8 +210,9 @@ class TaskService {
         fields[SpFields.actualCompletion] = now;
         fields[SpFields.reviewedByEmployeeId] = actor.employee.employeeId;
         fields[SpFields.progress] = 100;
-      case TaskStatus.newTask:
       case TaskStatus.accepted:
+        fields[SpFields.acceptedAtUtc] = now;
+      case TaskStatus.newTask:
         break;
     }
     return _save(current, fields);
@@ -371,6 +396,11 @@ class TaskService {
   }
 
   // --- helpers ---
+
+  /// The held minutes after adding the office time from [from] to [to].
+  double _addHeld(TaskItem task, DateTime from, DateTime to) =>
+      ((task.heldMinutes + _office.minutesBetween(from, to)) * 100).round() /
+      100;
 
   void _requireLead(AppUser actor) {
     if (!TaskAccess.forUser(actor).canCreate) {

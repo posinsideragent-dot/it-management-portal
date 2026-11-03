@@ -1,9 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../core/utilities/malaysia_time.dart';
 import '../../models/task_item.dart';
 import '../../services/task_capabilities.dart';
+import '../../services/task_hours.dart';
+import '../../shared/widgets/elapsed_text.dart';
 import '../../state/providers.dart';
 import 'task_action_dialog.dart';
 import 'task_list_controller.dart';
@@ -25,6 +28,7 @@ class TaskDetailDialog extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final caps = user == null ? null : TaskCapabilities.of(user, task);
     final theme = FluentTheme.of(context);
+    final hours = TaskHours.compute(task, DateTime.now().toUtc());
 
     return ContentDialog(
       constraints: const BoxConstraints(maxWidth: 680),
@@ -48,6 +52,15 @@ class TaskDetailDialog extends ConsumerWidget {
             if (task.blockerRemarks.isNotEmpty)
               _row('Last reason', task.blockerRemarks),
             const SizedBox(height: 12),
+            _section(theme, 'Timeline (Malaysia time)'),
+            _row('Accepted', _when(task.acceptedAtUtc)),
+            _row('Work started', _when(task.actualStart)),
+            _row(
+              'Submitted for review (job ended)',
+              _when(task.submittedAtUtc),
+            ),
+            _row('Approved', _when(task.actualCompletion)),
+            const SizedBox(height: 12),
             _section(theme, 'Estimate'),
             _row('Original', '${_h(task.estimatedHours)} h'),
             if (task.revisedEstimatedHours != null)
@@ -63,6 +76,7 @@ class TaskDetailDialog extends ConsumerWidget {
               ),
             if (task.estimateRevisionReason.isNotEmpty)
               _row('Revision reason', task.estimateRevisionReason),
+            _hoursRows(hours, task),
             if (caps != null && (caps.canRequestRevision || caps.canDecideRevision))
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -261,18 +275,56 @@ class TaskDetailDialog extends ConsumerWidget {
 
   // --- layout helpers ---
 
+  /// Date and time in Malaysia time, or a dash when not recorded.
+  String _when(DateTime? utc) => utc == null ? '-' : formatMalaysiaTime(utc);
+
+  /// Hours used and the variance against the original estimate.
+  Widget _hoursRows(TaskHoursSummary? hours, TaskItem task) {
+    if (hours == null) {
+      return _row(
+        'Hours used',
+        'Not available. Needs the start and submit dates of this task.',
+      );
+    }
+    final over = hours.varianceMinutes > 0;
+    final percent = (hours.variancePercentOf(task.estimatedHours) * 100).round();
+    final sign = over ? '+' : (hours.varianceMinutes < 0 ? '-' : '');
+    final word = over ? 'over' : (hours.varianceMinutes < 0 ? 'under' : 'on');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _row(
+          'Hours used',
+          '${formatMinutes(hours.usedMinutes)} office hours'
+          '${hours.stillRunning ? ' so far' : ''}',
+        ),
+        _row(
+          'Variance vs original',
+          '$sign${formatMinutes(hours.varianceMinutes.abs())} ($sign${percent.abs()}%) '
+          '$word the original ${_h(task.estimatedHours)} h',
+          color: over ? StatusColors.danger : StatusColors.success,
+        ),
+      ],
+    );
+  }
+
   Widget _section(FluentThemeData theme, String title) => Padding(
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(title, style: theme.typography.bodyStrong),
       );
 
-  Widget _row(String label, String value) => Padding(
+  Widget _row(String label, String value, {Color? color}) => Padding(
         padding: const EdgeInsets.only(bottom: 4),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: 150, child: Text(label)),
-            Expanded(child: SelectableText(value.isEmpty ? '-' : value)),
+            SizedBox(width: 190, child: Text(label)),
+            Expanded(
+              child: SelectableText(
+                value.isEmpty ? '-' : value,
+                style: color == null ? null : TextStyle(color: color),
+              ),
+            ),
           ],
         ),
       );

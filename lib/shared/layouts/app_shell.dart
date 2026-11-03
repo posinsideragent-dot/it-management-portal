@@ -18,7 +18,6 @@ class AppShell extends ConsumerWidget {
   final String location;
   final Widget child;
 
-  static const _mainPaths = [AppRoutes.dashboard, AppRoutes.employees, AppRoutes.tasks, AppRoutes.timeTracker];
   static const _footerPaths = [AppRoutes.settings];
 
   @override
@@ -27,14 +26,22 @@ class AppShell extends ConsumerWidget {
     final session = ref.watch(sessionControllerProvider);
     final userName = session is SessionActive ? session.user.name : '';
 
-    final mainIndex = _mainPaths.indexOf(location);
+    final mainPaths = [
+      AppRoutes.dashboard,
+      AppRoutes.employees,
+      AppRoutes.tasks,
+      if (config.showTimeTracker) AppRoutes.timeTracker,
+    ];
+    final mainIndex = mainPaths.indexOf(location);
     final footerIndex = _footerPaths.indexOf(location);
     final selected = mainIndex >= 0
         ? mainIndex
-        : (footerIndex >= 0 ? _mainPaths.length + footerIndex : 0);
+        : (footerIndex >= 0 ? mainPaths.length + footerIndex : 0);
 
     // Watching this also reads the running timer from SharePoint at sign-in.
-    final activeTimer = ref.watch(timeTrackerControllerProvider).active;
+    final activeTimer = config.showTimeTracker
+        ? ref.watch(timeTrackerControllerProvider).active
+        : null;
     final expanded = ref.watch(sidebarExpandedProvider);
     final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
 
@@ -50,6 +57,7 @@ class AppShell extends ConsumerWidget {
         userName: userName,
         selected: selected,
         activeTimer: activeTimer,
+        showTimeTracker: config.showTimeTracker,
       );
     });
   }
@@ -65,6 +73,7 @@ class AppShell extends ConsumerWidget {
     required String userName,
     required int selected,
     required TimeLog? activeTimer,
+    required bool showTimeTracker,
   }) {
     return NavigationView(
       // fluent_ui 4.14+ replaced NavigationAppBar with a plain `titleBar` widget.
@@ -128,12 +137,13 @@ class AppShell extends ConsumerWidget {
             body: const SizedBox.shrink(),
             onTap: () => context.go(AppRoutes.tasks),
           ),
-          PaneItem(
-            icon: const Icon(FluentIcons.timer),
-            title: const Text('Time Tracker'),
-            body: const SizedBox.shrink(),
-            onTap: () => context.go(AppRoutes.timeTracker),
-          ),
+          if (showTimeTracker)
+            PaneItem(
+              icon: const Icon(FluentIcons.timer),
+              title: const Text('Time Tracker'),
+              body: const SizedBox.shrink(),
+              onTap: () => context.go(AppRoutes.timeTracker),
+            ),
         ],
         footerItems: [
           PaneItem(

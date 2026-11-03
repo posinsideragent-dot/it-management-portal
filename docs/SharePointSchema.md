@@ -90,12 +90,18 @@ Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values";
 | EstimateApprovedBy | Single line text | No | Added 2026-11-03. EmployeeID of the approving Team Lead. |
 | EstimateApprovedAtUTC | Date and time | No | Added 2026-11-03. |
 | ProposedEstimatedHours | Number | No | Added 2026-11-03. A revision waiting for approval. Empty when none waits. Min 0. |
+| AcceptedAtUTC | Date and time | No | Added 2026-11-03. When the assignee accepted the task. |
+| SubmittedAtUTC | Date and time | No | Added 2026-11-03. When the task was last submitted for review. Cleared when returned for rework. This is the "job ended" date. |
+| HoldStartedAtUTC | Date and time | No | Added 2026-11-03. When the task was put On Hold. Cleared on resume. |
+| HeldMinutes | Number | No | Added 2026-11-03. Office minutes spent On Hold or waiting in review. Not work time. Min 0. |
 | DocumentationRemarks | Multiple lines | No | Added 2026-11-03. Last documentation note: submitted, reviewed, rejected or waived, with the EmployeeID. |
 
 Still optional (add only if needed, and document it): `TaskClosedBy`, `TaskClosedAtUTC`.
 
 How the app uses `BlockerRemarks`: it holds the reason when a task is put On Hold, Cancelled, or returned from review. The status and SharePoint version history show which one it was.
 A revision request sets `ProposedEstimatedHours` and `EstimateRevisionReason`. Approval moves it into `RevisedEstimatedHours` and sets `EstimateApprovedBy` and `EstimateApprovedAtUTC`. Rejection clears `ProposedEstimatedHours` and prefixes the reason with "Rejected:". `EstimatedHours` (the original) never changes. SharePoint version history keeps every earlier value.
+
+**Hours used** are worked out in the app from these dates, not from timers: office hours (Mon-Fri 09:00-18:00 Malaysia, no holiday or lunch removal) from `ActualStart` to `SubmittedAtUTC` (to now while In Progress), minus `HeldMinutes`. The variance is hours used minus the original `EstimatedHours`. Tasks made before these dates were saved show "Not available".
 
 The documentation flow is Pending, then Submitted, then Reviewed or Rejected (Rejected goes back to Submitted). A Team Lead can waive documentation (status Not Required) with a reason. `DocumentationRequired` stays Yes.
 

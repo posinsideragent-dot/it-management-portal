@@ -60,3 +60,11 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - Ending a timer does not change the task status. Use **Submit for review** on the Tasks page when the work is finished.
 - After a restart the app no longer remembers which task you paused. Press **Start** on the task again.
 - Times come from your PC clock. Keep the clock correct.
+
+## Dates, hours used and variance (Tasks, Details button)
+
+- The Timeline shows when the task was accepted, started, submitted for review (the job ends here) and approved. Times are Malaysia time.
+- **Hours used** counts only office hours: Monday to Friday, 09:00 to 18:00. Nights, weekends, time On Hold and time waiting in review are not counted. Public holidays and lunch are not removed.
+- **Variance** is hours used minus the original estimate. Red means over. Green means under or on.
+- While the task is In Progress the hours are "so far". After submit for review they stop.
+- Tasks made before 3 Nov 2026 may show "Not available" because the dates were not saved.

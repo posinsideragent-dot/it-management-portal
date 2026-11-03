@@ -27,3 +27,4 @@ Status: in progress. See also the table at the end of `SpikeRunbook.md`.
 | Start fails with a duplicate or "already have a timer" | A timer is already running, possibly on another PC. Open Time Tracker, then Pause or End it. If none is shown, check `ActiveTimerKey` in IT_TimeLogs (the old row must have an empty key). |
 | Time Tracker fails with HTTP 400 mentioning an index | `EmployeeID`, `TaskCode`, `StartTimeUTC`, `TimerStatus` or `ActiveTimerKey` is not indexed in IT_TimeLogs. Re-run the list script. |
 | Timer cannot be ended: "clock is earlier than the start time" | This PC's date or time is wrong. Fix it and try again. |
+| Details shows "Hours used: Not available" | The task has no start or submit date saved. Tasks made before these dates were added show this. New tasks save them when accepted, started and submitted. Also check the 4 new IT_Tasks columns exist (AdminSetup-DEV.md Part J). |

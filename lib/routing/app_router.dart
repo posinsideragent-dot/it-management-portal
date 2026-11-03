@@ -41,6 +41,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       final atSignIn = state.matchedLocation == AppRoutes.signIn;
       if (!signedIn && !atSignIn) return AppRoutes.signIn;
       if (signedIn && atSignIn) return AppRoutes.dashboard;
+      // A hidden page cannot be opened by address either.
+      if (state.matchedLocation == AppRoutes.timeTracker &&
+          !ref.read(appConfigProvider).showTimeTracker) {
+        return AppRoutes.dashboard;
+      }
       return null;
     },
     routes: [

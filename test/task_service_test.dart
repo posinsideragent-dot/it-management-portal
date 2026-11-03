@@ -43,6 +43,9 @@ TaskItem task({
   double? proposed,
   double? revised,
   bool? docRequired,
+  DateTime? submittedAt,
+  DateTime? holdStartedAt,
+  double held = 0,
 }) =>
     TaskItem(
       itemId: '10',
@@ -60,6 +63,9 @@ TaskItem task({
       progress: 0,
       documentationRequired:
           docRequired ?? docs != DocumentationStatus.notRequired,
+      submittedAtUtc: submittedAt,
+      holdStartedAtUtc: holdStartedAt,
+      heldMinutes: held,
       proposedEstimatedHours: proposed,
       revisedEstimatedHours: revised,
       documentationStatus: docs,
