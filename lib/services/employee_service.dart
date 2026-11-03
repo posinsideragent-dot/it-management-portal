@@ -43,6 +43,19 @@ class EmployeeService {
   Future<EmployeePage> listPage({bool? isActive, String? nextLink}) =>
       _directory.listPage(isActive: isActive, nextLink: nextLink);
 
+  /// Active employees, for pick lists. Reads at most [maxPages] pages.
+  Future<List<Employee>> listActive({int maxPages = 10}) async {
+    final all = <Employee>[];
+    String? next;
+    for (var i = 0; i < maxPages; i++) {
+      final page = await _directory.listPage(isActive: true, nextLink: next);
+      all.addAll(page.items);
+      next = page.nextLink;
+      if (next == null) break;
+    }
+    return all;
+  }
+
   Future<Employee> create(AppUser actor, EmployeeDraft input) async {
     _requireManager(actor);
     final draft = input.normalized();

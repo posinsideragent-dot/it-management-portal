@@ -5,6 +5,9 @@ import '../core/configuration/app_config.dart';
 import '../data/api/graph_client.dart';
 import '../data/repositories/employee_repository.dart';
 import '../data/repositories/profile_repository.dart';
+import '../data/repositories/task_repository.dart';
+import '../models/employee.dart';
+import '../services/task_service.dart';
 import '../models/app_user.dart';
 import '../services/employee_service.dart';
 import '../services/session_service.dart';
@@ -84,3 +87,26 @@ final employeeDirectoryProvider = Provider<EmployeeDirectory>(
 final employeeServiceProvider = Provider<EmployeeService>(
   (ref) => EmployeeService(ref.watch(employeeDirectoryProvider)),
 );
+
+// --- Tasks module ---
+
+final taskDirectoryProvider = Provider<TaskDirectory>(
+  (ref) => TaskRepository(
+    ref.watch(graphClientProvider),
+    ref.watch(appConfigProvider),
+  ),
+);
+
+final taskServiceProvider = Provider<TaskService>(
+  (ref) => TaskService(
+    ref.watch(taskDirectoryProvider),
+    ref.watch(employeeDirectoryProvider),
+  ),
+);
+
+/// Active employees for the "assigned to" list and for showing names.
+/// Reads at most 10 pages. Refreshes when the signed-in person changes.
+final activeEmployeesProvider = FutureProvider<List<Employee>>((ref) {
+  ref.watch(currentUserProvider);
+  return ref.watch(employeeServiceProvider).listActive();
+});
