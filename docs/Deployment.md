@@ -28,7 +28,7 @@ the DLLs and `data` folder beside it). Name it `ITDMP-PROD-<version>-<date>.zip`
 ## Install on a PC
 
 1. Unzip to a fixed folder, for example `C:\ITDMP`.
-2. Create a shortcut to `itdmp.exe`.
+2. Create a shortcut to the `.exe` in that folder.
 3. First start: sign in with the company Microsoft account.
 
 ## Update

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:itdmp/core/configuration/app_config.dart';
+import 'package:it_management_portal/core/configuration/app_config.dart';
 
 void main() {
   test('DEV config is complete', () {
