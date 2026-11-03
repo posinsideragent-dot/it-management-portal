@@ -32,7 +32,7 @@ class AppConfig {
         'sqlacc.sharepoint.com,626945d6-16e9-4fdd-8ad3-993720800677,f601c7c7-e0ff-4907-b2b3-05941f3acecf',
     employeesListId: '1b0bf4f3-5ef8-4907-9b99-66231cd23e4b',
     pocTestListId: '93137a60-b271-41d6-b84c-8666faae6be4',
-    tasksListId: '',
+    tasksListId: 'af842724-c698-4402-90ef-04a0905495e8',
   );
 
   /// Delegated scopes requested at sign-in. Keep this list minimal.

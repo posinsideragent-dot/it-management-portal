@@ -31,6 +31,7 @@ With `Sites.Selected` in the delegated case, access needs two things: the site g
 | Site grant for ITDMP-DEV app | Done 2026-11-02. Role: write. Site ITDMP-DEV only. |
 | List ID: IT_Employees (DEV) | 1b0bf4f3-5ef8-4907-9b99-66231cd23e4b |
 | List ID: IT_PoC_Test (DEV) | 93137a60-b271-41d6-b84c-8666faae6be4 |
+| List ID: IT_Tasks (DEV) | af842724-c698-4402-90ef-04a0905495e8 |
 | Client ID (PROD) | _to fill_ |
 | App owner (company admin) | _to fill_ |
 
