@@ -68,7 +68,7 @@ class EmployeeService {
           ),
         );
       } on GraphException catch (e) {
-        if (!_isDuplicate(e)) rethrow;
+        if (!e.isDuplicateValue) rethrow;
         // A duplicate means nothing was created, so another try is safe.
         // Either someone registered this account, or took this EmployeeID.
         if (await _directory.findByEntraObjectId(draft.entraObjectId) != null) {
@@ -175,12 +175,4 @@ class EmployeeService {
           EmployeeFormField.entraObjectId: 'Already registered.',
         },
       );
-
-  // Graph reports a unique-value clash as 409, or as a 400 that mentions it.
-  // Verify against the real list (docs/Troubleshooting.md).
-  bool _isDuplicate(GraphException e) =>
-      e.statusCode == 409 ||
-      (e.statusCode == 400 &&
-          (e.userMessage.toLowerCase().contains('unique') ||
-              e.userMessage.toLowerCase().contains('duplicate')));
 }

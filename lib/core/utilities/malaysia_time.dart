@@ -11,3 +11,16 @@ String formatMalaysiaTime(DateTime value) {
   String two(int n) => n.toString().padLeft(2, '0');
   return '${t.year}-${two(t.month)}-${two(t.day)} ${two(t.hour)}:${two(t.minute)}';
 }
+
+/// The calendar year in Malaysia at the moment [value].
+int malaysiaYear(DateTime value) => toMalaysiaTime(value).year;
+
+/// Turns a date and time typed as Malaysia wall-clock time into UTC.
+DateTime malaysiaWallClockToUtc(
+  int year,
+  int month,
+  int day, [
+  int hour = 0,
+  int minute = 0,
+]) =>
+    DateTime.utc(year, month, day, hour, minute).subtract(malaysiaOffset);

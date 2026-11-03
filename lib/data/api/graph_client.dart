@@ -23,6 +23,15 @@ class GraphException implements Exception {
   bool get isForbidden => statusCode == 403;
   bool get isPreconditionFailed => statusCode == 412;
 
+  /// A unique-value clash. Graph reports it as 409, or as a 400 that mentions
+  /// it. Verify against the real list (docs/Troubleshooting.md).
+  bool get isDuplicateValue {
+    if (statusCode == 409) return true;
+    if (statusCode != 400) return false;
+    final text = userMessage.toLowerCase();
+    return text.contains('unique') || text.contains('duplicate');
+  }
+
   @override
   String toString() =>
       'HTTP $statusCode${code == null ? '' : ' ($code)'}: $userMessage';
