@@ -25,6 +25,9 @@
 .PARAMETER ConfigPath
   Path to the JSON schema file. Default: itdmp_lists.json next to this script.
 
+.PARAMETER UseDeviceCode
+  Sign in with a code typed at https://microsoft.com/devicelogin. Use this if the browser sign-in fails.
+
 .EXAMPLE
   .\Create-ItdmpLists.ps1 -WhatIf
   .\Create-ItdmpLists.ps1
@@ -34,7 +37,9 @@
 param(
   [string]$SiteId = 'sqlacc.sharepoint.com,626945d6-16e9-4fdd-8ad3-993720800677,f601c7c7-e0ff-4907-b2b3-05941f3acecf',
   [string[]]$Lists,
-  [string]$ConfigPath = (Join-Path $PSScriptRoot 'itdmp_lists.json')
+  [string]$ConfigPath = (Join-Path $PSScriptRoot 'itdmp_lists.json'),
+  [string]$TenantId = 'de1751f9-e541-4dca-9fff-9366ccd7a998',
+  [switch]$UseDeviceCode
 )
 
 $ErrorActionPreference = 'Stop'
@@ -98,7 +103,9 @@ $targets = @($config.lists)
 if ($Lists) { $targets = @($targets | Where-Object { $Lists -contains $_.name }) }
 if ($targets.Count -eq 0) { throw 'No matching lists in the schema file.' }
 
-Connect-MgGraph -Scopes 'Sites.Manage.All' -NoWelcome
+$connect = @{ Scopes = 'Sites.Manage.All'; TenantId = $TenantId; NoWelcome = $true }
+if ($UseDeviceCode) { $connect.UseDeviceCode = $true }
+Connect-MgGraph @connect
 $failures = New-Object System.Collections.Generic.List[string]
 $summary = @()
 
