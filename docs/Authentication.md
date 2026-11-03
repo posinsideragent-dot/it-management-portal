@@ -81,3 +81,13 @@ Unknown or inactive users are denied, with a message that names the administrato
 **Chosen option:** _to fill_
 **Reason:** _to fill_
 **Management approval (if not MSAL):** _name and date_
+
+## Unauthorised-user test (2026-11-03)
+
+| Run | Account | Result |
+|---|---|---|
+| 1 | Test account in no ITDMP group, but found in the `ITDMP-DEV Owners` group | **Fail for the right reason.** SharePoint gave Full Control, so read, create and update all worked. The app check alone said DENIED. Found with Site permissions, Check Permissions. |
+| 2 | Same account, removed from Owners | **Pass.** Graph returned HTTP 403 (accessDenied) for Who am I, Read employees and Create item, with the message "You do not have permission for this SharePoint data." Calls took 81-339 ms. |
+
+Lesson: after adding any test or staff account, run Check Permissions on the site. The in-app check is a usability check only. SharePoint is the real boundary.
+Per-user "own time logs only" enforcement (spec 7.2) is a separate test, still to do before the Time Tracker module.

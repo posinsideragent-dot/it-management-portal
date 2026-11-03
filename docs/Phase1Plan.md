@@ -55,7 +55,7 @@ Device code flow is allowed for the proof of concept only, and only if the admin
 - [x] Create and read a list item
 - [x] Update a list item
 - [x] Correct user identity retrieved
-- [ ] Unauthorised user is denied (**deferred by the project owner on 2026-11-03; must be tested before any module goes to production use or before step 9 is closed**)
+- [x] Unauthorised user is denied (tested 2026-11-03, see docs/Authentication.md)
 
 Do not start full module work until every box is ticked.
 

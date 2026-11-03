@@ -8,3 +8,4 @@
 - Auth spike option 2 code (Dart PKCE sign-in, Graph client, test page). Not yet compiled or tested on Windows. See docs/SpikeRunbook.md.
 - Phase 1 spike result: 5 of 6 gate checks passed on Windows. Unauthorised-user check deferred by the project owner.
 - Phase 1 steps 6-7 (branch feature/app-shell): Fluent shell, Riverpod, go_router, sign-in page, identity lookup against `IT_Employees`, blocked-user handling, Malaysia time helper, tests. Built and run on Windows on 2026-11-03: analyze clean, app opens, sign-in shell works.
+- Phase 1 gate: all six checks passed on 2026-11-03. Unauthorised user gets HTTP 403 from SharePoint.
