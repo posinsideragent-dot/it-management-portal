@@ -86,6 +86,23 @@ windows/  test/  integration_test/  docs/  scripts/
 A blocked user's saved session is cleared. A server or network error is shown as a failure and keeps the session, so the user can retry.
 The sign-in spike test page is still available: `flutter run -d windows -t lib/spike_main.dart`.
 
+## Employees module
+
+| Layer | Files |
+|---|---|
+| Presentation | `lib/features/employee_management/` (list page, form dialog) |
+| State | `employee_list_controller.dart`, `employee_list_state.dart` |
+| Service | `lib/services/employee_service.dart` (rules), `employee_validator.dart`, `employee_ids.dart`, `employee_access.dart` |
+| Repository | `lib/data/repositories/employee_repository.dart` (`EmployeeDirectory` interface) |
+| Models | `employee.dart`, `employee_draft.dart`, `employee_page.dart`, `app_role.dart` |
+
+Decisions:
+- **Audit:** SharePoint version history on `IT_Employees` (no separate audit list yet).
+- **Duplicates:** `EmployeeID` and `EntraObjectID` enforce unique values in SharePoint. A failed create is safe to retry with a new number, because nothing was saved. This is the duplicate guard instead of a separate operation ID column.
+- **Roles:** checked in the service for usability. SharePoint permissions are the real boundary. `ITDMP Members` can edit rows in SharePoint, so a determined member could bypass the app. Decide on list or item permissions before production.
+- **Paging:** Graph `@odata.nextLink`. The link is followed only if it points to `graph.microsoft.com`.
+- **Search and role filter** work on loaded rows. Only the Active/Inactive filter runs in SharePoint.
+
 ## Workspaces
 
 One codebase, three role-based workspaces: Management, Team Lead, Employee.

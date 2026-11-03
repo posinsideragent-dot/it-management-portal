@@ -135,6 +135,16 @@ Use real company accounts made for testing. Do not use the admin accounts for th
 | Object ID of Account 2 | |
 | Names of the two company admins | |
 
+## Part G: Before the Employees module (ITDMP-DEV)
+
+Do this on `IT_Employees` (List settings):
+
+1. **Indexed columns:** make sure `EmployeeID`, `EntraObjectID`, `Email` and `IsActive` are all indexed.
+2. **Unique values:** open the column `EmployeeID`, set **Enforce unique values** to Yes. Do the same for `EntraObjectID`. This needs the index from step 1.
+3. **Version history:** List settings, **Versioning settings**, **Create a version each time you edit an item** = Yes. This is the audit trail (who changed a row and when).
+4. **Choices:** `Department` must hold exactly `IT` and `Development`. `AppRole` must hold exactly `Management`, `TeamLead`, `Employee` and `Admin`.
+5. **Permissions check:** run Site permissions, Check Permissions for every real account. Only the intended groups may give access.
+
 ## Done checklist
 
 - [ ] Site `ITDMP-DEV` exists, 2+ owners
