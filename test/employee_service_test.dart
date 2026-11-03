@@ -109,6 +109,8 @@ EmployeeDraft goodDraft({String oid = '6417b3d2-3445-49d5-b8ad-1471efaad5a6'}) =
       appRole: 'Employee',
     );
 
+const workerOid = '11111111-1111-1111-1111-111111111111';
+
 void main() {
   late FakeDirectory directory;
   late EmployeeService service;
@@ -119,7 +121,7 @@ void main() {
     directory = FakeDirectory();
     service = EmployeeService(directory, clock: () => DateTime.utc(2026, 11, 3));
     final m = emp('1', role: 'Management', oid: 'oid-m');
-    final w = emp('2', role: 'Employee', oid: 'oid-w');
+    final w = emp('2', role: 'Employee', oid: workerOid);
     directory.rows.addAll([m, w]);
     manager = userOf(m);
     worker = userOf(w);
@@ -157,7 +159,7 @@ void main() {
 
     test('an already registered Object ID is refused', () async {
       final e = await ruleError(
-        () => service.create(manager, goodDraft(oid: 'oid-w')),
+        () => service.create(manager, goodDraft(oid: workerOid)),
       );
       expect(e.message, contains('already registered'));
     });
@@ -231,7 +233,7 @@ void main() {
       final draft = EmployeeDraft(
         name: 'Name 2',
         email: 'e2@x.com',
-        entraObjectId: 'oid-w',
+        entraObjectId: workerOid,
         department: 'IT',
         appRole: 'Employee',
         managerEmployeeId: 'EMP-0002',

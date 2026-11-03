@@ -90,7 +90,7 @@ class _SpikePageState extends State<SpikePage> {
   }
 
   Future<String> _readEmployees() async {
-    final rows = await _employees.listFirstPage();
+    final rows = (await _employees.listPage()).items;
     final names = rows.map((e) => '${e.employeeId}/${e.name}').join(', ');
     return '${rows.length} row(s): $names';
   }
