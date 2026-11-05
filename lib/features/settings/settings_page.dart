@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/session_state.dart';
 import '../../shared/layouts/page_frame.dart';
 import '../../state/providers.dart';
+import '../../state/ui_state.dart';
 
 /// Shows the signed-in account and lets the user sign out.
 class SettingsPage extends ConsumerWidget {
@@ -39,6 +40,12 @@ class SettingsPage extends ConsumerWidget {
                 ],
               ),
             ),
+          const SizedBox(height: 8),
+          ToggleSwitch(
+            checked: ref.watch(themeModeProvider) == ThemeMode.dark,
+            onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
+            content: const Text('Dark mode'),
+          ),
           const SizedBox(height: 16),
           Button(
             onPressed: () => _confirmSignOut(context, ref),

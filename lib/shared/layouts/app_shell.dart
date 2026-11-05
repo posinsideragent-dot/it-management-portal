@@ -2,9 +2,14 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_theme.dart';
+import '../../features/time_tracking/time_tracker_controller.dart';
+import '../../models/time_log.dart';
 import '../../routing/app_router.dart';
 import '../../services/session_state.dart';
 import '../../state/providers.dart';
+import '../../state/ui_state.dart';
+import '../widgets/elapsed_text.dart';
 
 /// Sidebar plus top bar around every signed-in page.
 class AppShell extends ConsumerWidget {
@@ -13,7 +18,6 @@ class AppShell extends ConsumerWidget {
   final String location;
   final Widget child;
 
-  static const _mainPaths = [AppRoutes.dashboard, AppRoutes.timeTracker];
   static const _footerPaths = [AppRoutes.settings];
 
   @override
@@ -22,23 +26,91 @@ class AppShell extends ConsumerWidget {
     final session = ref.watch(sessionControllerProvider);
     final userName = session is SessionActive ? session.user.name : '';
 
-    final mainIndex = _mainPaths.indexOf(location);
+    final mainPaths = [
+      AppRoutes.dashboard,
+      AppRoutes.employees,
+      AppRoutes.tasks,
+      AppRoutes.dailyReports,
+      AppRoutes.issues,
+      if (config.showTimeTracker) AppRoutes.timeTracker,
+    ];
+    final mainIndex = mainPaths.indexOf(location);
     final footerIndex = _footerPaths.indexOf(location);
     final selected = mainIndex >= 0
         ? mainIndex
-        : (footerIndex >= 0 ? _mainPaths.length + footerIndex : 0);
+        : (footerIndex >= 0 ? mainPaths.length + footerIndex : 0);
 
+    // Watching this also reads the running timer from SharePoint at sign-in.
+    final activeTimer = config.showTimeTracker
+        ? ref.watch(timeTrackerControllerProvider).active
+        : null;
+    final expanded = ref.watch(sidebarExpandedProvider);
+    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
+
+    return LayoutBuilder(builder: (context, constraints) {
+      // Narrow windows always show the icon-only sidebar.
+      final narrow = constraints.maxWidth < _narrowWidth;
+      final showLabels = expanded && !narrow;
+      return _buildView(
+        context, ref,
+        showLabels: showLabels,
+        isDark: isDark,
+        environment: config.environment,
+        userName: userName,
+        selected: selected,
+        activeTimer: activeTimer,
+        showTimeTracker: config.showTimeTracker,
+      );
+    });
+  }
+
+  static const _narrowWidth = 900.0;
+
+  Widget _buildView(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool showLabels,
+    required bool isDark,
+    required String environment,
+    required String userName,
+    required int selected,
+    required TimeLog? activeTimer,
+    required bool showTimeTracker,
+  }) {
     return NavigationView(
       // fluent_ui 4.14+ replaced NavigationAppBar with a plain `titleBar` widget.
       titleBar: SizedBox(
         height: 48,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
-              Text('ITDMP  (${config.environment})'),
+              Tooltip(
+                message: showLabels ? 'Collapse menu' : 'Expand menu',
+                child: IconButton(
+                  icon: const Icon(FluentIcons.global_nav_button),
+                  onPressed: ref.read(sidebarExpandedProvider.notifier).toggle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text('ITDMP', style: FluentTheme.of(context).typography.bodyStrong),
+              const SizedBox(width: 8),
+              Text('($environment)'),
               const Spacer(),
+              if (activeTimer != null) ...[
+                _TimerChip(log: activeTimer),
+                const SizedBox(width: 12),
+              ],
+              Tooltip(
+                message: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+                child: IconButton(
+                  icon: Icon(isDark ? FluentIcons.sunny : FluentIcons.clear_night),
+                  onPressed: ref.read(themeModeProvider.notifier).toggle,
+                ),
+              ),
+              const SizedBox(width: 8),
               Text(userName),
+              const SizedBox(width: 8),
             ],
           ),
         ),
@@ -46,7 +118,8 @@ class AppShell extends ConsumerWidget {
       paneBodyBuilder: (item, body) => child,
       pane: NavigationPane(
         selected: selected,
-        displayMode: PaneDisplayMode.expanded,
+        displayMode:
+            showLabels ? PaneDisplayMode.expanded : PaneDisplayMode.compact,
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.home),
@@ -55,11 +128,36 @@ class AppShell extends ConsumerWidget {
             onTap: () => context.go(AppRoutes.dashboard),
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.timer),
-            title: const Text('Time Tracker'),
+            icon: const Icon(FluentIcons.people),
+            title: const Text('Employees'),
             body: const SizedBox.shrink(),
-            onTap: () => context.go(AppRoutes.timeTracker),
+            onTap: () => context.go(AppRoutes.employees),
           ),
+          PaneItem(
+            icon: const Icon(FluentIcons.task_list),
+            title: const Text('Tasks'),
+            body: const SizedBox.shrink(),
+            onTap: () => context.go(AppRoutes.tasks),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.report_document),
+            title: const Text('Daily Reports'),
+            body: const SizedBox.shrink(),
+            onTap: () => context.go(AppRoutes.dailyReports),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.bug),
+            title: const Text('Issues'),
+            body: const SizedBox.shrink(),
+            onTap: () => context.go(AppRoutes.issues),
+          ),
+          if (showTimeTracker)
+            PaneItem(
+              icon: const Icon(FluentIcons.timer),
+              title: const Text('Time Tracker'),
+              body: const SizedBox.shrink(),
+              onTap: () => context.go(AppRoutes.timeTracker),
+            ),
         ],
         footerItems: [
           PaneItem(
@@ -69,6 +167,32 @@ class AppShell extends ConsumerWidget {
             onTap: () => context.go(AppRoutes.settings),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Shows the running timer in the top bar. Click to open the Time Tracker.
+class _TimerChip extends StatelessWidget {
+  const _TimerChip({required this.log});
+
+  final TimeLog log;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Open the Time Tracker',
+      child: HyperlinkButton(
+        onPressed: () => context.go(AppRoutes.timeTracker),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(FluentIcons.circle_fill, size: 8, color: StatusColors.active),
+            const SizedBox(width: 8),
+            Text('${log.taskCode}  '),
+            ElapsedText(startUtc: log.startUtc),
+          ],
+        ),
       ),
     );
   }

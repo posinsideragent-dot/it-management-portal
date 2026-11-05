@@ -23,6 +23,15 @@ class GraphException implements Exception {
   bool get isForbidden => statusCode == 403;
   bool get isPreconditionFailed => statusCode == 412;
 
+  /// A unique-value clash. Graph reports it as 409, or as a 400 that mentions
+  /// it. Verify against the real list (docs/Troubleshooting.md).
+  bool get isDuplicateValue {
+    if (statusCode == 409) return true;
+    if (statusCode != 400) return false;
+    final text = userMessage.toLowerCase();
+    return text.contains('unique') || text.contains('duplicate');
+  }
+
   @override
   String toString() =>
       'HTTP $statusCode${code == null ? '' : ' ($code)'}: $userMessage';
@@ -67,6 +76,24 @@ class GraphClient {
   }) =>
       _send('PATCH', path, body: body, headers: headers, canRetry: false);
 
+  /// Follows an `@odata.nextLink` returned by Graph.
+  /// The link must point to Graph itself, so the token is never sent elsewhere.
+  Future<Map<String, dynamic>> getUrl(String url) {
+    if (!isTrustedGraphUrl(url)) {
+      throw GraphException(
+        statusCode: 0,
+        userMessage: 'Unexpected paging link was ignored.',
+      );
+    }
+    return _sendUri('GET', Uri.parse(url), canRetry: true);
+  }
+
+  /// True only for https links on the Graph host.
+  static bool isTrustedGraphUrl(String url) {
+    final uri = Uri.tryParse(url);
+    return uri != null && uri.scheme == 'https' && uri.host == 'graph.microsoft.com';
+  }
+
   Future<Map<String, dynamic>> _send(
     String method,
     String path, {
@@ -74,8 +101,22 @@ class GraphClient {
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     required bool canRetry,
+  }) =>
+      _sendUri(
+        method,
+        _buildUri(path, query),
+        body: body,
+        headers: headers,
+        canRetry: canRetry,
+      );
+
+  Future<Map<String, dynamic>> _sendUri(
+    String method,
+    Uri uri, {
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+    required bool canRetry,
   }) async {
-    final uri = _buildUri(path, query);
     final watch = Stopwatch()..start();
     var attempt = 0;
 

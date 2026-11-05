@@ -26,6 +26,8 @@ Three groups only. Roles (Management, TeamLead, Employee, Admin) are stored in `
 
 The documentation libraries inherit from the site. There is no separate documentation group.
 
+> **Warning:** create lists with `scripts/Create-ItdmpLists.ps1` (source: `scripts/itdmp_lists.json`). Never use "Create list from Excel": it names columns `field_N`. Keep the JSON file in sync with this document.
+
 ## Naming and relationships
 
 - Relationships use text IDs, not Lookup columns.
@@ -56,7 +58,7 @@ The documentation libraries inherit from the site. There is no separate document
 | ManagerEmployeeID | Single line text | No | |
 | CreatedAtUTC | Date and time | No | App-maintained |
 
-Rules: EmployeeID and EntraObjectID are unique. Inactive employees cannot start jobs. Never delete historical records.
+Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values"; this needs the index). Turn on version history for this list: it is the audit trail. Inactive employees cannot start jobs. Never delete historical records.
 
 ## List 2: IT_Tasks
 
@@ -72,9 +74,9 @@ Rules: EmployeeID and EntraObjectID are unique. Inactive employees cannot start 
 | Priority | Choice | Yes | Low / Normal / High / Critical |
 | Status | Choice | Yes | New / Accepted / In Progress / On Hold / Pending Review / Completed / Cancelled |
 | EstimatedHours | Number | Yes | Initial estimate |
-| RevisedEstimatedHours | Number | No | |
-| PlannedStart | Date and time | No | |
-| ExpectedCompletion | Date and time | Yes | |
+| RevisedEstimatedHours | Number | No | The approved revised estimate. Empty until a revision is approved. |
+| PlannedStart | Date and time | No | The app stores a date only: 00:00 Malaysia time of the chosen day (UTC in SharePoint). |
+| ExpectedCompletion | Date and time | Yes | Same as PlannedStart: a date only. Old rows may hold a time; the app shows the Malaysia date. |
 | ActualStart | Date and time | No | First actual start |
 | ActualCompletion | Date and time | No | |
 | Progress | Number | Yes | 0-100 |
@@ -84,8 +86,27 @@ Rules: EmployeeID and EntraObjectID are unique. Inactive employees cannot start 
 | DocumentationStatus | Choice | Yes | Not Required / Pending / Submitted / Reviewed / Rejected |
 | ReviewedByEmployeeID | Single line text | No | |
 | LastProgressUpdateUTC | Date and time | No | |
+| EstimateRevisionReason | Single line text | No | Added 2026-11-03. Why the estimate was revised. |
+| EstimateApprovedBy | Single line text | No | Added 2026-11-03. EmployeeID of the approving Team Lead. |
+| EstimateApprovedAtUTC | Date and time | No | Added 2026-11-03. |
+| ProposedEstimatedHours | Number | No | Added 2026-11-03. A revision waiting for approval. Empty when none waits. Min 0. |
+| AcceptedAtUTC | Date and time | No | Added 2026-11-03. When the assignee accepted the task. |
+| SubmittedAtUTC | Date and time | No | Added 2026-11-03. When the task was last submitted for review. Cleared when returned for rework. This is the "job ended" date. |
+| HoldStartedAtUTC | Date and time | No | Added 2026-11-03. When the task was put On Hold. Cleared on resume. |
+| HeldMinutes | Number | No | Added 2026-11-03. Office minutes spent On Hold or waiting in review. Not work time. Min 0. |
+| CompanyName | Single line text | No | Added 2026-11-05. Customer company. Empty for internal tasks. |
+| Attn | Single line text | No | Added 2026-11-05. Customer contact person. |
+| ContactNumber | Single line text | No | Added 2026-11-05. Customer phone number, up to 50 characters. |
+| DocumentationRemarks | Multiple lines | No | Added 2026-11-03. Last documentation note: submitted, reviewed, rejected or waived, with the EmployeeID. |
 
-Optional audit fields (add only if needed, and document it): `EstimateRevisionReason`, `EstimateApprovedBy`, `EstimateApprovedAtUTC`, `TaskClosedBy`, `TaskClosedAtUTC`.
+Still optional (add only if needed, and document it): `TaskClosedBy`, `TaskClosedAtUTC`.
+
+How the app uses `BlockerRemarks`: it holds the reason when a task is put On Hold, Cancelled, or returned from review. The status and SharePoint version history show which one it was.
+A revision request sets `ProposedEstimatedHours` and `EstimateRevisionReason`. Approval moves it into `RevisedEstimatedHours` and sets `EstimateApprovedBy` and `EstimateApprovedAtUTC`. Rejection clears `ProposedEstimatedHours` and prefixes the reason with "Rejected:". `EstimatedHours` (the original) never changes. SharePoint version history keeps every earlier value.
+
+**Hours used** are worked out in the app from these dates, not from timers: office hours (Mon-Fri 09:00-18:00 Malaysia, no holiday or lunch removal) from `ActualStart` to `SubmittedAtUTC` (to now while In Progress), minus `HeldMinutes`. The variance is hours used minus the original `EstimatedHours`. Tasks made before these dates were saved show "Not available".
+
+The documentation flow is Pending, then Submitted, then Reviewed or Rejected (Rejected goes back to Submitted). A Team Lead can waive documentation (status Not Required) with a reason. `DocumentationRequired` stays Yes.
 
 Rules:
 
@@ -143,6 +164,8 @@ Rules:
 | SubmittedAtUTC | Date and time | No | |
 | ReviewedAtUTC | Date and time | No | |
 
+How the app uses this list: `ReportCode` is `DR-<EmployeeID>-<yyyyMMdd>` (for example `DR-EMP-0002-20261103`). Because it is unique, SharePoint itself refuses a second report for the same person and day. `ReportDate` is written as `YYYY-MM-DDT00:00:00Z`. `CompletedActivities` and `TotalHours` are required even for a draft, because the columns are required. `TotalHours` is typed by the person while the Time Tracker is hidden. Editing a report keeps its date. `ReviewRemarks` keeps the last review reason until the next review; earlier values are in version history. Status flow: Draft, Submitted, then Reviewed or Returned. Returned goes back to Submitted after the owner edits it.
+
 Rules: one report per employee per date. ReportCode is unique. Employees edit only their own drafts. Submitted reports are read-only unless returned.
 
 ## List 5: IT_Issues
@@ -162,6 +185,8 @@ Rules: one report per employee per date. ReportCode is unique. Employees edit on
 | ResolutionRemarks | Multiple lines | No | |
 | ReportedAtUTC | Date and time | Yes | |
 | ResolvedAtUTC | Date and time | No | |
+
+How the app uses this list: `IssueCode` is `ISS-<year>-<5 digits>`, restarting each year. Status flow: Open, Assigned (a lead assigns), Investigating, Waiting or Resolved, then Closed. A Resolved issue can be reopened to Investigating. Closed is final. A lead can close any issue that is not Resolved without fixing it, with a reason. `ResolutionRemarks` holds the latest note: `Waiting: ...`, `Reopened: ...`, `Closed: ...`, or the resolution text itself once Resolved (confirming and closing a Resolved issue keeps the resolution text). Earlier notes are in version history. `RelatedTaskCode` must look like `TASK-2026-00001`; the app does not check that the task exists. `ResolvedAtUTC` is cleared on reopen. Everyone can read all issues in the app.
 
 ## List 6: IT_Projects
 
@@ -237,6 +262,7 @@ Never store passwords, API secrets, private keys or admin credentials in documen
 
 | List | Index these columns |
 |---|---|
+| IT_Employees | EmployeeID, EntraObjectID, Email, IsActive |
 | IT_Tasks | TaskCode, AssignedEmployeeID, Status, ExpectedCompletion, ProjectCode |
 | IT_TimeLogs | TimeLogCode, EmployeeID, TaskCode, StartTimeUTC, TimerStatus, ActiveTimerKey |
 | IT_DailyReports | ReportCode, EmployeeID, ReportDate, SubmissionStatus |

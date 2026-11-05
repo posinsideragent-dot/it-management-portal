@@ -1,0 +1,843 @@
+{
+  "_comment": "Source of truth for the SharePoint list columns. Keep in sync with docs/SharePointSchema.md. Used by scripts/Create-ItdmpLists.ps1.",
+  "lists": [
+    {
+      "name": "IT_Employees",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "EmployeeID",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "Email",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "EntraObjectID",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "JobTitle",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "Department",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "IT",
+            "Development"
+          ]
+        },
+        {
+          "name": "AppRole",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Management",
+            "TeamLead",
+            "Employee",
+            "Admin"
+          ]
+        },
+        {
+          "name": "IsActive",
+          "type": "bool",
+          "required": true,
+          "indexed": true,
+          "default": "1"
+        },
+        {
+          "name": "JoinDate",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "ManagerEmployeeID",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "CreatedAtUTC",
+          "type": "dateTime",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "IT_Tasks",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "TaskCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "Description",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "name": "TaskType",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Development",
+            "Bug Fix",
+            "Support",
+            "Installation",
+            "Maintenance",
+            "Research",
+            "Internal IT"
+          ]
+        },
+        {
+          "name": "AssignedEmployeeID",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "CreatedByEmployeeID",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "ProjectCode",
+          "type": "text",
+          "required": false,
+          "indexed": true
+        },
+        {
+          "name": "Priority",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Low",
+            "Normal",
+            "High",
+            "Critical"
+          ],
+          "default": "Normal"
+        },
+        {
+          "name": "Status",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "New",
+            "Accepted",
+            "In Progress",
+            "On Hold",
+            "Pending Review",
+            "Completed",
+            "Cancelled"
+          ],
+          "default": "New"
+        },
+        {
+          "name": "EstimatedHours",
+          "type": "number",
+          "required": true,
+          "min": 0
+        },
+        {
+          "name": "RevisedEstimatedHours",
+          "type": "number",
+          "required": false,
+          "min": 0
+        },
+        {
+          "name": "CompanyName",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "Attn",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ContactNumber",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "PlannedStart",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "ExpectedCompletion",
+          "type": "dateTime",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "ActualStart",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "ActualCompletion",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "Progress",
+          "type": "number",
+          "required": true,
+          "default": "0",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "name": "BlockerRemarks",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "CompletionRemarks",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "DocumentationRequired",
+          "type": "bool",
+          "required": true,
+          "default": "1"
+        },
+        {
+          "name": "DocumentationStatus",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Not Required",
+            "Pending",
+            "Submitted",
+            "Reviewed",
+            "Rejected"
+          ],
+          "default": "Pending"
+        },
+        {
+          "name": "ReviewedByEmployeeID",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "LastProgressUpdateUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "EstimateRevisionReason",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "EstimateApprovedBy",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "EstimateApprovedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "ProposedEstimatedHours",
+          "type": "number",
+          "required": false,
+          "min": 0
+        },
+        {
+          "name": "DocumentationRemarks",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "AcceptedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "SubmittedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "HoldStartedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "HeldMinutes",
+          "type": "number",
+          "required": false,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "name": "IT_TimeLogs",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "TimeLogCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "EmployeeID",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "TaskCode",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "StartTimeUTC",
+          "type": "dateTime",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "EndTimeUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "DurationMinutes",
+          "type": "number",
+          "required": false
+        },
+        {
+          "name": "TimerStatus",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "Active",
+            "Completed",
+            "Corrected"
+          ]
+        },
+        {
+          "name": "ActiveTimerKey",
+          "type": "text",
+          "required": false,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "ActivityDescription",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "WorkResult",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "CorrectionReason",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "CorrectedByEmployeeID",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "CorrectionApprovedBy",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "IsDeleted",
+          "type": "bool",
+          "required": true,
+          "default": "0"
+        }
+      ]
+    },
+    {
+      "name": "IT_DailyReports",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "ReportCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "EmployeeID",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "ReportDate",
+          "type": "date",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "PlannedActivities",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "CompletedActivities",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "name": "PendingActivities",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "ProblemsEncountered",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "TomorrowPlan",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "TotalHours",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "SubmissionStatus",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "Draft",
+            "Submitted",
+            "Reviewed",
+            "Returned"
+          ],
+          "default": "Draft"
+        },
+        {
+          "name": "ReviewedByEmployeeID",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ReviewRemarks",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "SubmittedAtUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "ReviewedAtUTC",
+          "type": "dateTime",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "IT_Issues",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "IssueCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "Description",
+          "type": "multiline",
+          "required": true
+        },
+        {
+          "name": "IssueType",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Bug",
+            "Support",
+            "Infrastructure",
+            "Hardware",
+            "Software",
+            "Security",
+            "Blocker"
+          ]
+        },
+        {
+          "name": "Priority",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "Low",
+            "Normal",
+            "High",
+            "Critical"
+          ],
+          "default": "Normal"
+        },
+        {
+          "name": "Status",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "Open",
+            "Assigned",
+            "Investigating",
+            "Waiting",
+            "Resolved",
+            "Closed"
+          ],
+          "default": "Open"
+        },
+        {
+          "name": "ReportedByEmployeeID",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "AssignedEmployeeID",
+          "type": "text",
+          "required": false,
+          "indexed": true
+        },
+        {
+          "name": "RelatedTaskCode",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ProjectCode",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ResolutionRemarks",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "ReportedAtUTC",
+          "type": "dateTime",
+          "required": true
+        },
+        {
+          "name": "ResolvedAtUTC",
+          "type": "dateTime",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "IT_Projects",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "ProjectCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "Description",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "ProjectManagerEmployeeID",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "Status",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "Planning",
+            "Active",
+            "On Hold",
+            "Completed",
+            "Cancelled"
+          ],
+          "default": "Planning"
+        },
+        {
+          "name": "Priority",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Low",
+            "Normal",
+            "High",
+            "Critical"
+          ],
+          "default": "Normal"
+        },
+        {
+          "name": "StartDate",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "ExpectedCompletion",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "ActualCompletion",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "Progress",
+          "type": "number",
+          "required": true,
+          "default": "0",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "name": "ProjectRemarks",
+          "type": "multiline",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "IT_DocumentRegister",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "DocumentCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "DocumentType",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "System",
+            "Technical",
+            "User Manual",
+            "Installation",
+            "API",
+            "Troubleshooting",
+            "Handover"
+          ]
+        },
+        {
+          "name": "RelatedProjectCode",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "RelatedTaskCode",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "OwnerEmployeeID",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "DocumentStatus",
+          "type": "choice",
+          "required": true,
+          "indexed": true,
+          "choices": [
+            "Draft",
+            "Submitted",
+            "Reviewed",
+            "Rejected",
+            "Archived"
+          ],
+          "default": "Draft"
+        },
+        {
+          "name": "DocumentLocation",
+          "type": "hyperlink",
+          "required": true
+        },
+        {
+          "name": "VersionNumber",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ReviewedByEmployeeID",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ReviewDateUTC",
+          "type": "dateTime",
+          "required": false
+        },
+        {
+          "name": "ReviewRemarks",
+          "type": "multiline",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "IT_KPIRecords",
+      "columns": [
+        {
+          "name": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "KPIRecordCode",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "indexed": true
+        },
+        {
+          "name": "EmployeeID",
+          "type": "text",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "ReviewPeriodStart",
+          "type": "date",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "name": "ReviewPeriodEnd",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "TasksCompleted",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "TasksOverdue",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "EstimatedHours",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "ActualHours",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "DocumentationScore",
+          "type": "number",
+          "required": false
+        },
+        {
+          "name": "QualityScore",
+          "type": "number",
+          "required": false
+        },
+        {
+          "name": "OverallScore",
+          "type": "number",
+          "required": false
+        },
+        {
+          "name": "ManagementRemarks",
+          "type": "multiline",
+          "required": false
+        },
+        {
+          "name": "ReviewedByEmployeeID",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "ApprovedAtUTC",
+          "type": "dateTime",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

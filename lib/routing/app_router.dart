@@ -3,8 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/sign_in_page.dart';
+import '../features/daily_reports/daily_report_list_page.dart';
 import '../features/dashboard/dashboard_page.dart';
+import '../features/employee_management/employee_list_page.dart';
+import '../features/issue_management/issue_list_page.dart';
 import '../features/settings/settings_page.dart';
+import '../features/task_management/task_list_page.dart';
 import '../features/time_tracking/time_tracker_page.dart';
 import '../services/session_state.dart';
 import '../shared/layouts/app_shell.dart';
@@ -16,6 +20,10 @@ class AppRoutes {
 
   static const signIn = '/sign-in';
   static const dashboard = '/dashboard';
+  static const employees = '/employees';
+  static const tasks = '/tasks';
+  static const issues = '/issues';
+  static const dailyReports = '/daily-reports';
   static const timeTracker = '/time-tracker';
   static const settings = '/settings';
 }
@@ -37,6 +45,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       final atSignIn = state.matchedLocation == AppRoutes.signIn;
       if (!signedIn && !atSignIn) return AppRoutes.signIn;
       if (signedIn && atSignIn) return AppRoutes.dashboard;
+      // A hidden page cannot be opened by address either.
+      if (state.matchedLocation == AppRoutes.timeTracker &&
+          !ref.read(appConfigProvider).showTimeTracker) {
+        return AppRoutes.dashboard;
+      }
       return null;
     },
     routes: [
@@ -51,6 +64,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.dashboard,
             builder: (context, state) => const DashboardPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.employees,
+            builder: (context, state) => const EmployeeListPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.tasks,
+            builder: (context, state) => const TaskListPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.issues,
+            builder: (context, state) => const IssueListPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.dailyReports,
+            builder: (context, state) => const DailyReportListPage(),
           ),
           GoRoute(
             path: AppRoutes.timeTracker,
