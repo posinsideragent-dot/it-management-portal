@@ -135,6 +135,78 @@ Use real company accounts made for testing. Do not use the admin accounts for th
 | Object ID of Account 2 | |
 | Names of the two company admins | |
 
+## Part G: Before the Employees module (ITDMP-DEV)
+
+Do this on `IT_Employees` (List settings):
+
+1. **Indexed columns:** make sure `EmployeeID`, `EntraObjectID`, `Email` and `IsActive` are all indexed.
+2. **Unique values:** open the column `EmployeeID`, set **Enforce unique values** to Yes. Do the same for `EntraObjectID`. This needs the index from step 1.
+3. **Version history:** List settings, **Versioning settings**, **Create a version each time you edit an item** = Yes. This is the audit trail (who changed a row and when).
+4. **Choices:** `Department` must hold exactly `IT` and `Development`. `AppRole` must hold exactly `Management`, `TeamLead`, `Employee` and `Admin`.
+5. **Permissions check:** run Site permissions, Check Permissions for every real account. Only the intended groups may give access.
+
+## Part H: Create IT_Tasks (before the Tasks module)
+
+**Shortcut:** run the script in Part I instead of creating the columns by hand. Part H then serves as the checklist of settings.
+
+Create the list `IT_Tasks` on ITDMP-DEV (Site contents, New, List, Blank list). Keep the default `Title` column. Add these columns. Use these exact internal names: create each column with no spaces, then rename the display name only if you wish.
+
+| Column | Type | Required | Settings |
+|---|---|---|---|
+| TaskCode | Single line of text | Yes | Indexed, **Enforce unique values** |
+| Description | Multiple lines of text | Yes | Plain text |
+| TaskType | Choice | Yes | Development, Bug Fix, Support, Installation, Maintenance, Research, Internal IT |
+| AssignedEmployeeID | Single line of text | Yes | Indexed |
+| CreatedByEmployeeID | Single line of text | Yes | |
+| ProjectCode | Single line of text | No | Indexed |
+| Priority | Choice | Yes | Low, Normal, High, Critical. Default Normal |
+| Status | Choice | Yes | New, Accepted, In Progress, On Hold, Pending Review, Completed, Cancelled. Default New. Indexed |
+| EstimatedHours | Number | Yes | Min 0 |
+| RevisedEstimatedHours | Number | No | Min 0 |
+| PlannedStart | Date and time | No | Date and time |
+| ExpectedCompletion | Date and time | Yes | Date and time. Indexed |
+| ActualStart | Date and time | No | Date and time |
+| ActualCompletion | Date and time | No | Date and time |
+| Progress | Number | Yes | Min 0, max 100, default 0 |
+| BlockerRemarks | Multiple lines of text | No | Plain text |
+| CompletionRemarks | Multiple lines of text | No | Plain text |
+| DocumentationRequired | Yes/No | Yes | Default Yes |
+| DocumentationStatus | Choice | Yes | Not Required, Pending, Submitted, Reviewed, Rejected. Default Pending |
+| ReviewedByEmployeeID | Single line of text | No | |
+| LastProgressUpdateUTC | Date and time | No | Date and time |
+| EstimateRevisionReason | Single line of text | No | |
+| EstimateApprovedBy | Single line of text | No | |
+| EstimateApprovedAtUTC | Date and time | No | Date and time |
+
+Then:
+
+1. **Indexes:** index `TaskCode`, `AssignedEmployeeID`, `Status`, `ExpectedCompletion` and `ProjectCode`. Set **Enforce unique values** on `TaskCode` (needs the index first).
+2. **Version history:** List settings, Versioning settings, create a version each time an item is edited.
+3. **Permissions:** keep inherited permissions. Check with Check Permissions that a non-member still gets 403.
+4. **Send me the List ID.** Use `https://graph.microsoft.com/v1.0/sites/{site-id}/lists?$filter=displayName eq 'IT_Tasks'` in Graph Explorer, or copy it from the list settings address. I record it in `docs/Authentication.md` and the app config.
+
+## Part J: Two more IT_Tasks columns (Tasks step 2)
+
+Run `.\scripts\Create-ItdmpLists.ps1 -Lists IT_Tasks -UseDeviceCode`. It adds only the missing columns: `ProposedEstimatedHours` (Number, min 0), `DocumentationRemarks` (Multiple lines of text), `AcceptedAtUTC`, `SubmittedAtUTC`, `HoldStartedAtUTC` (Date and time) and `HeldMinutes` (Number, min 0). Do not rename them.
+
+## Part I: Create the lists with the script (replaces Excel import)
+
+**Do not use "Create list from Excel".** It names the columns `field_1`, `field_2` and so on, and the app cannot find them ("A provided field name is not recognized"). A list made that way must be deleted and recreated.
+
+The script `scripts/Create-ItdmpLists.ps1` reads `scripts/itdmp_lists.json` and creates each list and column with the exact internal name, including required, unique, indexed, choices, defaults and number limits. It skips anything that already exists, so `IT_Employees` and `IT_PoC_Test` are left alone.
+
+1. In SharePoint, delete any list created from Excel (for example `IT_Tasks`), then empty the site Recycle bin and the site collection Recycle bin so the name is free.
+2. Open PowerShell and run once: `Install-Module Microsoft.Graph.Authentication -Scope CurrentUser`
+3. In the repo folder run a dry run first: `.\scripts\Create-ItdmpLists.ps1 -WhatIf`
+4. Run it for real: `.\scripts\Create-ItdmpLists.ps1`. Sign in as the setup admin and accept `Sites.Manage.All` when asked. Use `-Lists IT_Tasks` to do one list.
+5. Send back the List IDs printed at the end. The script disconnects when finished. Remove the consent afterwards in Entra, Enterprise applications, Microsoft Graph Command Line Tools.
+
+Manual steps the script cannot do:
+- Turn on version history for every list (List settings, Versioning settings). This is the audit trail.
+- Restrict `IT_KPIRecords` to Management (break inheritance) before it holds any data.
+- Create the three document libraries by hand.
+- Confirm in List settings, Indexed columns, that the indexes were applied.
+
 ## Done checklist
 
 - [ ] Site `ITDMP-DEV` exists, 2+ owners

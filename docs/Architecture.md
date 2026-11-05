@@ -57,7 +57,9 @@ Package rule: use maintained packages with verified Windows support. Pin version
 
 ```text
 lib/
-  main.dart, app.dart
+  main.dart, app.dart, spike_main.dart (sign-in spike only)
+  state/         Riverpod providers and the session controller
+  routing/       go_router config and route paths
   core/          authentication, configuration, errors, logging, utilities
   data/          api (graph_client, sharepoint_rest_client, api_error_handler), repositories, dto
   models/        employee, task, time_log, daily_report, issue, project, document, kpi_record
@@ -68,6 +70,56 @@ lib/
   routing/
 windows/  test/  integration_test/  docs/  scripts/
 ```
+
+## App shell and sign-in flow (Phase 1, steps 6-7)
+
+| Part | File | Job |
+|---|---|---|
+| Entry | `lib/main.dart`, `lib/app.dart` | `ProviderScope`, Fluent theme, `go_router` |
+| Providers | `lib/state/providers.dart` | Wires config, auth, Graph client, repositories, session |
+| Session rules | `lib/services/session_service.dart` | Sign in, read `/me`, find the Object ID in `IT_Employees`, block unknown or inactive users |
+| Session state | `lib/services/session_state.dart` | Checking, SignedOut, SigningIn, Blocked, Failed, Active |
+| Router | `lib/routing/app_router.dart` | Redirects signed-out users to the sign-in page. Usability only, not security. |
+| Shell | `lib/shared/layouts/app_shell.dart` | Sidebar, top bar, page body |
+| Pages | `lib/features/*` | Sign in, Dashboard, Time Tracker (start, pause, resume, end), Settings |
+
+A blocked user's saved session is cleared. A server or network error is shown as a failure and keeps the session, so the user can retry.
+The sign-in spike test page is still available: `flutter run -d windows -t lib/spike_main.dart`.
+
+## Employees module
+
+| Layer | Files |
+|---|---|
+| Presentation | `lib/features/employee_management/` (list page, form dialog) |
+| State | `employee_list_controller.dart`, `employee_list_state.dart` |
+| Service | `lib/services/employee_service.dart` (rules), `employee_validator.dart`, `employee_ids.dart`, `employee_access.dart` |
+| Repository | `lib/data/repositories/employee_repository.dart` (`EmployeeDirectory` interface) |
+| Models | `employee.dart`, `employee_draft.dart`, `employee_page.dart`, `app_role.dart` |
+
+Decisions:
+- **Audit:** SharePoint version history on `IT_Employees` (no separate audit list yet).
+- **Duplicates:** `EmployeeID` and `EntraObjectID` enforce unique values in SharePoint. A failed create is safe to retry with a new number, because nothing was saved. This is the duplicate guard instead of a separate operation ID column.
+- **Roles:** checked in the service for usability. SharePoint permissions are the real boundary. `ITDMP Members` can edit rows in SharePoint, so a determined member could bypass the app. Decide on list or item permissions before production.
+- **Paging:** Graph `@odata.nextLink`. The link is followed only if it points to `graph.microsoft.com`.
+- **Search and role filter** work on loaded rows. Only the Active/Inactive filter runs in SharePoint.
+
+## Tasks module (step 1)
+
+| Layer | Files |
+|---|---|
+| Presentation | `lib/features/task_management/` (list page, form, status and progress dialogs) |
+| State | `task_list_controller.dart`, `task_list_state.dart` |
+| Service | `lib/services/task_service.dart`, `task_workflow.dart` (the only status table), `task_validator.dart`, `task_codes.dart`, `task_access.dart`, `task_variance.dart` |
+| Repository | `lib/data/repositories/task_repository.dart` (`TaskDirectory` interface) |
+| Models | `task_item.dart`, `task_draft.dart`, `task_enums.dart`, `task_page.dart` |
+
+Decisions:
+- **Status changes** go through `TaskWorkflow`. Assignee: accept, start, hold, resume, submit. Team Lead, Management and Admin: cancel, approve, return.
+- **Reasons** for hold, cancel and return are saved in `BlockerRemarks` with a prefix (`On hold:`, `Cancelled:`, `Returned:`). Version history keeps the earlier text.
+- **TaskCode** is the highest code plus one, restarting each Malaysia year. SharePoint rejects duplicates, and the service retries up to 3 times.
+- **Original estimate** is editable only while the task is New. Revised estimates arrive in step 2.
+- **Actual hours** are not shown yet. They must come from time logs. Time Tracker step 2 adds the per-task total.
+- Server-side filters: Status and AssignedEmployeeID (indexed). Search runs on loaded rows.
 
 ## Workspaces
 
