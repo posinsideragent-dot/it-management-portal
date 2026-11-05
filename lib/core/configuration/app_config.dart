@@ -148,6 +148,9 @@ class SpFields {
   static const estimateRevisionReason = 'EstimateRevisionReason';
   static const estimateApprovedBy = 'EstimateApprovedBy';
   static const estimateApprovedAtUtc = 'EstimateApprovedAtUTC';
+  static const companyName = 'CompanyName';
+  static const attn = 'Attn';
+  static const contactNumber = 'ContactNumber';
   static const proposedEstimatedHours = 'ProposedEstimatedHours';
   static const acceptedAtUtc = 'AcceptedAtUTC';
   static const submittedAtUtc = 'SubmittedAtUTC';

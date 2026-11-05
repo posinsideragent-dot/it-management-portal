@@ -18,6 +18,9 @@ TaskDraft draft({
   double? hours = 4,
   DateTime? due,
   DateTime? start,
+  String company = '',
+  String attn = '',
+  String contact = '',
 }) =>
     TaskDraft(
       title: title,
@@ -28,6 +31,9 @@ TaskDraft draft({
       estimatedHours: hours,
       expectedCompletion: due ?? DateTime.utc(2026, 12, 1),
       plannedStart: start,
+      companyName: company,
+      attn: attn,
+      contactNumber: contact,
       documentationRequired: false,
     );
 
@@ -119,6 +125,34 @@ void main() {
     test('a past completion date is refused on create', () {
       final errors = check(draft(due: DateTime.utc(2026, 1, 1)), now: DateTime.utc(2026, 11, 3));
       expect(errors, contains(TaskFormField.expectedCompletion));
+    });
+    test('completion today in Malaysia is allowed on create', () {
+      // 2026-11-03 10:00 Malaysia = 02:00 UTC. Due is the same Malaysia day.
+      final now = DateTime.utc(2026, 11, 3, 2);
+      final due = malaysiaWallClockToUtc(2026, 11, 3);
+      expect(check(draft(due: due), now: now), isEmpty);
+    });
+    test('customer fields are optional, with limits', () {
+      expect(check(draft()), isEmpty);
+      expect(check(draft(company: 'A' * 256)), contains(TaskFormField.companyName));
+      expect(check(draft(attn: 'A' * 256)), contains(TaskFormField.attn));
+      expect(check(draft(contact: 'abc')), contains(TaskFormField.contactNumber));
+      expect(check(draft(contact: '1' * 51)), contains(TaskFormField.contactNumber));
+      expect(check(draft(contact: '+60 12-345 6789')), isEmpty);
+    });
+    test('customer fields are sent, and cleared with null on edit', () {
+      final d = draft(company: ' Acme ', attn: 'Ms Lim', contact: '012-3456789').normalized();
+      final create = d.toCreateFields(taskCode: 'TASK-2026-00001', createdByEmployeeId: 'EMP-0001');
+      expect(create['CompanyName'], 'Acme');
+      expect(create['Attn'], 'Ms Lim');
+      expect(create['ContactNumber'], '012-3456789');
+      final empty = draft().normalized().toUpdateFields(includeEstimate: false);
+      expect(empty['CompanyName'], isNull);
+      expect(empty.containsKey('CompanyName'), isTrue);
+    });
+    test('same-day planned start and completion is allowed', () {
+      final day = malaysiaWallClockToUtc(2026, 12, 1);
+      expect(check(draft(start: day, due: day)), isEmpty);
     });
     test('planned start must not be after completion', () {
       final errors = check(draft(start: DateTime.utc(2027, 1, 1)));

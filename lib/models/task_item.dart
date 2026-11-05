@@ -37,7 +37,17 @@ class TaskItem {
     this.submittedAtUtc,
     this.holdStartedAtUtc,
     this.heldMinutes = 0,
+    this.companyName = '',
+    this.attn = '',
+    this.contactNumber = '',
   });
+
+  /// Customer details. Empty for internal tasks.
+  final String companyName;
+
+  /// The customer contact person (Attn).
+  final String attn;
+  final String contactNumber;
 
   /// SharePoint list item id.
   final String itemId;
@@ -148,6 +158,9 @@ class TaskItem {
       submittedAtUtc: _utc(f[SpFields.submittedAtUtc]),
       holdStartedAtUtc: _utc(f[SpFields.holdStartedAtUtc]),
       heldMinutes: _number(f[SpFields.heldMinutes]) ?? 0,
+      companyName: text(SpFields.companyName),
+      attn: text(SpFields.attn),
+      contactNumber: text(SpFields.contactNumber),
     );
   }
 }

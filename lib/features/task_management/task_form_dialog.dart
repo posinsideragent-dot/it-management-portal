@@ -8,7 +8,7 @@ import '../../models/task_enums.dart';
 import '../../models/task_item.dart';
 import '../../services/task_service.dart';
 import '../../services/task_validator.dart';
-import '../../shared/widgets/malaysia_date_time_field.dart';
+import '../../shared/widgets/malaysia_date_field.dart';
 import '../../state/providers.dart';
 import 'task_list_controller.dart';
 
@@ -29,6 +29,9 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
   late final TextEditingController _description;
   late final TextEditingController _estimate;
   late final TextEditingController _project;
+  late final TextEditingController _company;
+  late final TextEditingController _attn;
+  late final TextEditingController _contact;
   String? _type;
   String? _assignee;
   String _priority = TaskPriority.normal.label;
@@ -56,6 +59,9 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
       text: t == null ? '' : t.estimatedHours.toString(),
     );
     _project = TextEditingController(text: t?.projectCode ?? '');
+    _company = TextEditingController(text: t?.companyName ?? '');
+    _attn = TextEditingController(text: t?.attn ?? '');
+    _contact = TextEditingController(text: t?.contactNumber ?? '');
     _type = taskTypes.contains(t?.taskType) ? t?.taskType : null;
     _assignee = t?.assignedEmployeeId;
     _priority = t?.priority.label ?? TaskPriority.normal.label;
@@ -70,6 +76,9 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
     _description.dispose();
     _estimate.dispose();
     _project.dispose();
+    _company.dispose();
+    _attn.dispose();
+    _contact.dispose();
     super.dispose();
   }
 
@@ -80,6 +89,9 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
         assignedEmployeeId: _assignee ?? '',
         priority: _priority,
         projectCode: _project.text,
+        companyName: _company.text,
+        attn: _attn.text,
+        contactNumber: _contact.text,
         estimatedHours: double.tryParse(_estimate.text.trim()),
         plannedStart: _plannedStart,
         expectedCompletion: _expected,
@@ -213,6 +225,21 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
               TaskFormField.priority,
             ),
             _field(
+              'Company name (optional)',
+              TextBox(controller: _company, enabled: !_saving),
+              TaskFormField.companyName,
+            ),
+            _field(
+              'Attn (optional)',
+              TextBox(controller: _attn, enabled: !_saving),
+              TaskFormField.attn,
+            ),
+            _field(
+              'Contact number (optional)',
+              TextBox(controller: _contact, enabled: !_saving),
+              TaskFormField.contactNumber,
+            ),
+            _field(
               'Project code (optional)',
               TextBox(controller: _project, enabled: !_saving),
               TaskFormField.projectCode,
@@ -228,18 +255,17 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
               TaskFormField.estimate,
             ),
             _field(
-              'Planned start, Malaysia time (optional)',
-              MalaysiaDateTimeField(
+              'Planned start date, Malaysia (optional)',
+              MalaysiaDateField(
                 value: _plannedStart,
                 enabled: !_saving,
-                defaultHour: 9,
                 onChanged: (v) => setState(() => _plannedStart = v),
               ),
               TaskFormField.plannedStart,
             ),
             _field(
-              'Expected completion, Malaysia time',
-              MalaysiaDateTimeField(
+              'Expected completion date, Malaysia',
+              MalaysiaDateField(
                 value: _expected,
                 enabled: !_saving,
                 onChanged: (v) => setState(() => _expected = v),

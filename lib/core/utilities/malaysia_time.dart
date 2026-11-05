@@ -30,3 +30,15 @@ DateTime malaysiaDayStartUtc(DateTime value) {
   final m = toMalaysiaTime(value);
   return DateTime.utc(m.year, m.month, m.day).subtract(malaysiaOffset);
 }
+
+/// Format: `2026-11-03`. The Malaysia calendar date of [value].
+String formatMalaysiaDate(DateTime value) {
+  final t = toMalaysiaTime(value);
+  String two(int n) => n.toString().padLeft(2, '0');
+  return '${t.year}-${two(t.month)}-${two(t.day)}';
+}
+
+/// True when the Malaysia calendar date of [a] is before that of [b].
+/// The time of day is ignored.
+bool isMalaysiaDateBefore(DateTime a, DateTime b) =>
+    malaysiaDayStartUtc(a).isBefore(malaysiaDayStartUtc(b));

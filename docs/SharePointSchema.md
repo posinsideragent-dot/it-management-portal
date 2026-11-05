@@ -75,8 +75,8 @@ Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values";
 | Status | Choice | Yes | New / Accepted / In Progress / On Hold / Pending Review / Completed / Cancelled |
 | EstimatedHours | Number | Yes | Initial estimate |
 | RevisedEstimatedHours | Number | No | The approved revised estimate. Empty until a revision is approved. |
-| PlannedStart | Date and time | No | |
-| ExpectedCompletion | Date and time | Yes | |
+| PlannedStart | Date and time | No | The app stores a date only: 00:00 Malaysia time of the chosen day (UTC in SharePoint). |
+| ExpectedCompletion | Date and time | Yes | Same as PlannedStart: a date only. Old rows may hold a time; the app shows the Malaysia date. |
 | ActualStart | Date and time | No | First actual start |
 | ActualCompletion | Date and time | No | |
 | Progress | Number | Yes | 0-100 |
@@ -94,6 +94,9 @@ Rules: EmployeeID and EntraObjectID are unique (turn on "Enforce unique values";
 | SubmittedAtUTC | Date and time | No | Added 2026-11-03. When the task was last submitted for review. Cleared when returned for rework. This is the "job ended" date. |
 | HoldStartedAtUTC | Date and time | No | Added 2026-11-03. When the task was put On Hold. Cleared on resume. |
 | HeldMinutes | Number | No | Added 2026-11-03. Office minutes spent On Hold or waiting in review. Not work time. Min 0. |
+| CompanyName | Single line text | No | Added 2026-11-05. Customer company. Empty for internal tasks. |
+| Attn | Single line text | No | Added 2026-11-05. Customer contact person. |
+| ContactNumber | Single line text | No | Added 2026-11-05. Customer phone number, up to 50 characters. |
 | DocumentationRemarks | Multiple lines | No | Added 2026-11-03. Last documentation note: submitted, reviewed, rejected or waived, with the EmployeeID. |
 
 Still optional (add only if needed, and document it): `TaskClosedBy`, `TaskClosedAtUTC`.

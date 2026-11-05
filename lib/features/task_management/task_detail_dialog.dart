@@ -43,9 +43,16 @@ class TaskDetailDialog extends ConsumerWidget {
             _row('Type', task.taskType),
             _row('Priority', task.priority.label),
             _row('Assigned to', task.assignedEmployeeId),
+            if (task.companyName.isNotEmpty)
+              _row('Company', task.companyName),
+            if (task.attn.isNotEmpty) _row('Attn', task.attn),
+            if (task.contactNumber.isNotEmpty)
+              _row('Contact number', task.contactNumber),
             if (task.projectCode.isNotEmpty) _row('Project', task.projectCode),
             _row('Progress', '${task.progress}%'),
-            _row('Due (Malaysia)', formatMalaysiaTime(task.expectedCompletion)),
+            if (task.plannedStart != null)
+              _row('Planned start', formatMalaysiaDate(task.plannedStart!)),
+            _row('Due (Malaysia)', formatMalaysiaDate(task.expectedCompletion)),
             _row('Description', task.description),
             if (task.completionRemarks.isNotEmpty)
               _row('Completion remarks', task.completionRemarks),

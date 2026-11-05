@@ -1,3 +1,4 @@
+import '../core/utilities/malaysia_time.dart';
 import '../models/task_draft.dart';
 import '../models/task_enums.dart';
 
@@ -12,6 +13,9 @@ enum TaskFormField {
   plannedStart,
   expectedCompletion,
   projectCode,
+  companyName,
+  attn,
+  contactNumber,
 }
 
 /// Rules for the task form. The UI uses it for quick feedback and the service
@@ -20,6 +24,9 @@ class TaskValidator {
   const TaskValidator._();
 
   static const maxEstimateHours = 1000.0;
+  static const maxCustomerText = 255;
+  static const maxContactNumber = 50;
+  static final _digit = RegExp(r'\d');
   static final _employeeId = RegExp(r'^EMP-\d{4,}$');
 
   /// An empty map means the draft is valid. Pass [nowUtc] on create so a
@@ -67,15 +74,28 @@ class TaskValidator {
     if (due == null) {
       errors[TaskFormField.expectedCompletion] =
           'Choose the expected completion date.';
-    } else if (nowUtc != null && due.isBefore(nowUtc)) {
+    } else if (nowUtc != null && isMalaysiaDateBefore(due, nowUtc)) {
       errors[TaskFormField.expectedCompletion] =
-          'The expected completion cannot be in the past.';
+          'The expected completion date cannot be in the past.';
     }
 
     final start = d.plannedStart;
-    if (start != null && due != null && start.isAfter(due)) {
+    if (start != null && due != null && isMalaysiaDateBefore(due, start)) {
       errors[TaskFormField.plannedStart] =
-          'The planned start must be before the expected completion.';
+          'The planned start date cannot be after the expected completion date.';
+    }
+
+    if (d.companyName.length > maxCustomerText) {
+      errors[TaskFormField.companyName] = 'The company name is too long.';
+    }
+    if (d.attn.length > maxCustomerText) {
+      errors[TaskFormField.attn] = 'The Attn name is too long.';
+    }
+    if (d.contactNumber.isNotEmpty &&
+        (d.contactNumber.length > maxContactNumber ||
+            !_digit.hasMatch(d.contactNumber))) {
+      errors[TaskFormField.contactNumber] =
+          'Enter a valid contact number (up to $maxContactNumber characters).';
     }
 
     if (d.projectCode.length > 50) {

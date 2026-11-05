@@ -170,6 +170,21 @@
           "min": 0
         },
         {
+          "name": "CompanyName",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "Attn",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "ContactNumber",
+          "type": "text",
+          "required": false
+        },
+        {
           "name": "PlannedStart",
           "type": "dateTime",
           "required": false

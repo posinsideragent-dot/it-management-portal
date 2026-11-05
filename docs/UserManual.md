@@ -38,7 +38,8 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 
 ## Look and layout
 
-- The app opens in dark mode. Use the sun or moon button in the top bar, or Settings, to switch.
+- The app opens in light mode. Use the sun or moon button in the top bar, or Settings, to switch to dark mode. The choice lasts until the app closes.
+- A task can carry the customer's company name, Attn and contact number (all optional; leave them empty for internal tasks). Planned start and expected completion are dates only, read as Malaysia dates. A task is overdue only after its due day has ended.
 - The menu button at the top left collapses the sidebar to icons or expands it. Narrow windows always show icons only.
 - On narrow windows the Tasks table becomes stacked cards. Widen the window to see the full table.
 

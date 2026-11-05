@@ -195,6 +195,7 @@ class _Body extends ConsumerWidget {
 const _columns = <(String, int)>[
   ('Code', 2),
   ('Title', 3),
+  ('Company', 2),
   ('Assigned to', 2),
   ('Priority', 1),
   ('Status', 2),
@@ -231,9 +232,10 @@ class _TaskRow extends ConsumerWidget {
     final actors =
         user == null ? <TaskActor>{} : TaskAccess.actorsFor(user, task);
     final assignee = names[task.assignedEmployeeId] ?? task.assignedEmployeeId;
+    // Due is a date. A task is overdue only after its due day has ended.
     final overdue = !task.status.isFinal &&
-        task.expectedCompletion.isBefore(DateTime.now().toUtc());
-    final due = formatMalaysiaTime(task.expectedCompletion);
+        isMalaysiaDateBefore(task.expectedCompletion, DateTime.now().toUtc());
+    final due = formatMalaysiaDate(task.expectedCompletion);
     final dueColor = overdue ? StatusColors.danger : null;
     final caps = user == null ? null : TaskCapabilities.of(user, task);
     final actions = _actions(context, actors, caps);
@@ -261,6 +263,7 @@ class _TaskRow extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             Text('${task.taskCode}  \u00b7  $assignee  \u00b7  ${task.priority.label}'),
+            if (task.companyName.isNotEmpty) Text(task.companyName),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -294,17 +297,18 @@ class _TaskRow extends ConsumerWidget {
         children: [
           text(0, task.taskCode),
           text(1, task.title),
-          text(2, assignee),
-          text(3, task.priority.label),
+          text(2, task.companyName),
+          text(3, assignee),
+          text(4, task.priority.label),
           TableCell2(
-            flex: _columns[4].$2,
+            flex: _columns[5].$2,
             child: Align(alignment: Alignment.centerLeft, child: _statusChip()),
           ),
-          text(5, hours),
-          text(6, due, color: dueColor),
-          TableCell2(flex: _columns[7].$2, child: _progress()),
+          text(6, hours),
+          text(7, due, color: dueColor),
+          TableCell2(flex: _columns[8].$2, child: _progress()),
           TableCell2(
-            flex: _columns[8].$2,
+            flex: _columns[9].$2,
             child: actions,
           ),
         ],

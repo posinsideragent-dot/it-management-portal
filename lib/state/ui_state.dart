@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Light or dark. Dark is the default. The choice lasts until the app closes.
+/// Light or dark. Light is the default. The choice lasts until the app closes.
 class ThemeModeController extends Notifier<ThemeMode> {
   @override
-  ThemeMode build() => ThemeMode.dark;
+  ThemeMode build() => ThemeMode.light;
 
   void toggle() =>
       state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;

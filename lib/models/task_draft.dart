@@ -14,6 +14,9 @@ class TaskDraft {
     required this.documentationRequired,
     this.projectCode = '',
     this.plannedStart,
+    this.companyName = '',
+    this.attn = '',
+    this.contactNumber = '',
   });
 
   final String title;
@@ -23,10 +26,16 @@ class TaskDraft {
   final String priority;
   final String projectCode;
 
+  /// Customer details. All optional.
+  final String companyName;
+  final String attn;
+  final String contactNumber;
+
   /// Null means the box is empty or not a number.
   final double? estimatedHours;
 
-  /// UTC. Null means not chosen yet.
+  /// Date only. Stored as 00:00 Malaysia time of the chosen day, in UTC.
+  /// Null means not chosen yet.
   final DateTime? plannedStart;
   final DateTime? expectedCompletion;
   final bool documentationRequired;
@@ -38,6 +47,9 @@ class TaskDraft {
         assignedEmployeeId: assignedEmployeeId.trim().toUpperCase(),
         priority: priority,
         projectCode: projectCode.trim().toUpperCase(),
+        companyName: companyName.trim(),
+        attn: attn.trim(),
+        contactNumber: contactNumber.trim(),
         estimatedHours: estimatedHours,
         plannedStart: plannedStart,
         expectedCompletion: expectedCompletion,
@@ -66,6 +78,9 @@ class TaskDraft {
             ? DocumentationStatus.pending.label
             : DocumentationStatus.notRequired.label,
         if (projectCode.isNotEmpty) SpFields.projectCode: projectCode,
+        if (companyName.isNotEmpty) SpFields.companyName: companyName,
+        if (attn.isNotEmpty) SpFields.attn: attn,
+        if (contactNumber.isNotEmpty) SpFields.contactNumber: contactNumber,
         if (plannedStart != null) SpFields.plannedStart: _iso(plannedStart!),
       };
 
@@ -80,6 +95,9 @@ class TaskDraft {
         SpFields.expectedCompletion: _iso(expectedCompletion!),
         SpFields.documentationRequired: documentationRequired,
         SpFields.projectCode: projectCode.isEmpty ? null : projectCode,
+        SpFields.companyName: companyName.isEmpty ? null : companyName,
+        SpFields.attn: attn.isEmpty ? null : attn,
+        SpFields.contactNumber: contactNumber.isEmpty ? null : contactNumber,
         SpFields.plannedStart:
             plannedStart == null ? null : _iso(plannedStart!),
         if (includeEstimate) SpFields.estimatedHours: estimatedHours,
