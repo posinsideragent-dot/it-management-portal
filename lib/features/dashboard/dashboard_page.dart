@@ -6,6 +6,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/utilities/malaysia_time.dart';
 import '../../data/api/graph_client.dart';
 import '../../models/dashboard.dart';
+import '../../models/employee.dart';
 import '../../routing/app_router.dart';
 import '../../shared/layouts/page_frame.dart';
 import '../../shared/widgets/status_chip.dart';
@@ -41,9 +42,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(dashboardProvider);
-    final names = {
-      for (final e in ref.watch(activeEmployeesProvider).value ?? const [])
-        e.employeeId: e.name,
+    final employees = ref.watch(activeEmployeesProvider).value;
+    final names = <String, String>{
+      for (final e in employees ?? const <Employee>[]) e.employeeId: e.name,
     };
 
     return PageFrame(
@@ -246,7 +247,7 @@ class _Panel extends StatelessWidget {
         Row(
           children: [
             Expanded(child: Text(title, style: theme.typography.subtitle)),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
         const SizedBox(height: 10),
@@ -334,7 +335,7 @@ class _TaskTile extends StatelessWidget {
     final theme = FluentTheme.of(context);
     final detail = [
       t.taskCode,
-      if (assignee != null) assignee!,
+      ?assignee,
       if (t.companyName.isNotEmpty) t.companyName,
       t.priority.label,
     ].join('  ·  ');
