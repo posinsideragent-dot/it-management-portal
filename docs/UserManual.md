@@ -87,3 +87,28 @@ Open **Tasks** in the sidebar. All times are Malaysia time.
 - A Team Lead can **Close without fixing** with a reason (for example, a duplicate). Closed issues cannot change.
 - The reporter can edit an Open issue. A Team Lead can edit any issue that is not Closed.
 - Use "Assigned to me" to see your issues. The latest note shows in the issue's details.
+
+## Dashboard
+
+The dashboard opens first. Click **Refresh** to load the latest data.
+
+Four cards count the tasks. Click a card to see its list.
+
+| Card | What it counts |
+|---|---|
+| Pending accept | Tasks with status New. The assignee has not accepted yet. |
+| Start work | Tasks with status Accepted. Accepted but not started. |
+| Almost due | Open tasks due in 1 to 3 days (Malaysia dates). |
+| Due | Open tasks due today or already late. Late ones are in red. |
+
+Tasks waiting for review (Pending Review) are not counted as due, because the work is finished.
+
+**Who sees what**
+- Team Lead, Management and Admin see all tasks.
+- Everyone else sees only the tasks assigned to them.
+
+**Notifications** list what needs your action. Click one to open the right page.
+- *To review* (Team Lead, Management, Admin): tasks waiting for review, estimate revisions to approve, documentation to review, new issues to assign, resolved issues to confirm, and submitted daily reports.
+- *Your actions* (everyone): tasks to accept or start, documentation sent back, issues assigned to you, your resolved issues to confirm, a returned daily report. On weekdays from 16:00 (Malaysia) it also reminds you if today's daily report is missing or still a draft.
+
+Notifications show only what is in the app. They do not send email or Teams messages yet; that comes with Power Automate.

@@ -12,6 +12,7 @@ import '../data/repositories/time_log_repository.dart';
 import '../models/app_user.dart';
 import '../models/employee.dart';
 import '../services/daily_report_service.dart';
+import '../services/dashboard_service.dart';
 import '../services/employee_service.dart';
 import '../services/issue_service.dart';
 import '../services/session_service.dart';
@@ -164,3 +165,13 @@ final activeEmployeesProvider = FutureProvider<List<Employee>>((ref) {
   ref.watch(currentUserProvider);
   return ref.watch(employeeServiceProvider).listActive();
 });
+
+// --- Dashboard ---
+
+final dashboardServiceProvider = Provider<DashboardService>(
+  (ref) => DashboardService(
+    ref.watch(taskDirectoryProvider),
+    ref.watch(issueDirectoryProvider),
+    ref.watch(dailyReportDirectoryProvider),
+  ),
+);
